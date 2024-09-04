@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Your Wellness Journey</string>
+    <string-array name="genders">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Others</item>
+    </string-array>
+</resources>

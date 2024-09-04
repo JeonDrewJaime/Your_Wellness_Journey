@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "996488795196",
+    "project_id": "your-wellness-journey",
+    "storage_bucket": "your-wellness-journey.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996488795196:android:0c4b047a2544438be35f39",
+        "android_client_info": {
+          "package_name": "com.example.yourwellnessjourney"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrFMHMQ-vt-prWD9_q1S5P5CO9sHnLeJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

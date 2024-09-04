@@ -1,0 +1,45 @@
+<!-- In res/values/styles.xml -->
+<resources>
+    <style name="CustomEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:background">@drawable/custom_edittext</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/cronus</item>
+    </style>
+
+
+    <style name="CustomSpinnerStyle" parent="Widget.AppCompat.Spinner.Underlined">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:background">@drawable/custom_edittext</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/cronus</item>
+    </style>
+    <style name="TitleTextStyle">
+
+
+
+        <item name="android:textColor">#173E9F</item>
+
+        <item name="android:fontFamily">@font/oh_whale</item>
+    </style>
+
+    <style name="FilledButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:textColor">#FFFFFF</item>
+
+        <item name="android:background">@drawable/custom_buton_filled</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/oh_whale</item>
+
+    </style>
+</resources>
