@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Home Menu Item -->
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/home"
+        android:title="Home"
+
+        android:textColor="@color/white"/>
+
+    <item
+        android:id="@+id/navigation_exercise"
+        android:icon="@drawable/exercise"
+        android:title="Exercise" />
+
+
+    <item
+        android:id="@+id/navigation_diet"
+        android:icon="@drawable/diet"
+        android:title="Diet" />
+
+    <item
+        android:id="@+id/navigation_medication"
+        android:icon="@drawable/medication"
+        android:title="Medication" />
+</menu>
