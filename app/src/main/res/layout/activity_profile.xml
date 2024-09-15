@@ -3,8 +3,141 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@drawable/dashboard_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Profile">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="112dp"
+        android:layout_height="124dp"
+        android:layout_marginTop="36dp"
+        android:contentDescription="Profile Image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/avatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/fullname"
+        style="@style/TitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="User Name"
+        android:textSize="30sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
+    <TextView
+        android:id="@+id/email"
+        style="@style/TitleTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email"
+        android:textSize="20sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/fullname"
+    app:layout_constraintVertical_bias="0.176" />
+
+    <GridLayout
+        android:id="@+id/grid_layout"
+        android:layout_width="388dp"
+        android:layout_height="490dp"
+        android:background="@drawable/rounded_top"
+        android:columnCount="2"
+        android:padding="15dp"
+        android:rowCount="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email"
+        app:layout_constraintVertical_bias="1.0">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/oh_whale"
+            android:gravity="left"
+            android:text="Gender"
+            android:textColor="#2D56A9"
+            android:textSize="20sp" /> <!-- Change dp to sp -->
+
+        <TextView
+            android:id="@+id/gender"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/cronus"
+            android:gravity="right"
+            android:text="Gender Sample"
+            android:textColor="#2D56A9"
+            android:textSize="20sp" /> <!-- Change dp to sp -->
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/oh_whale"
+            android:gravity="left"
+            android:text="Birthdate"
+            android:textColor="#2D56A9"
+            android:textSize="20sp" /> <!-- Change dp to sp -->
+
+        <TextView
+            android:id="@+id/birthdate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/cronus"
+            android:gravity="right"
+            android:text="Birthdate Sample"
+            android:textColor="#2D56A9"
+            android:textSize="20sp" /> <!-- Change dp to sp -->
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/oh_whale"
+            android:gravity="left"
+            android:text="Disease"
+            android:textColor="#2D56A9"
+            android:textSize="20sp" /> <!-- Change dp to sp -->
+
+        <TextView
+            android:id="@+id/disease"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="8dp"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/cronus"
+            android:gravity="right"
+            android:text="Disease Sample"
+            android:textColor="#2D56A9"
+            android:textSize="20sp" /> <!-- Change dp to sp -->
+
+    </GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

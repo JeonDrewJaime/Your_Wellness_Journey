@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="16dp"
-    android:background="?attr/colorPrimaryDark"
+    android:background="#225140"
     android:gravity="center_vertical">
 
     <!-- Avatar on the Left -->
@@ -18,7 +18,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/avatar" />
 
-    <!-- Name and Email on the Right -->
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -30,12 +30,15 @@
             android:id="@+id/profile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Name"
+            android:fontFamily="@font/oh_whale"
+            android:textSize="25dp"
+            android:text="Full name"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             android:gravity="start" />
 
         <TextView
+            android:fontFamily="@font/oh_whale"
             android:id="@+id/profile_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -1,14 +1,255 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".Home">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Home" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/textView2"
+            style="@style/TitleTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/cronus"
+            android:text="TODAY IS"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/myImageView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/dayToday"
+            style="@style/TitleTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="4dp"
+            android:text="Day"
+            android:textSize="45sp"
+            app:layout_constraintStart_toEndOf="@+id/myImageView"
+            app:layout_constraintTop_toBottomOf="@id/textView2" />
+
+        <ImageView
+            android:id="@+id/myImageView"
+            android:layout_width="112dp"
+            android:layout_height="123dp"
+            android:layout_marginTop="4dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/calendar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.088"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCalendar"
+            android:layout_width="343dp"
+            android:layout_height="304dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/myImageView"
+            card_view:cardBackgroundColor="#CEF0FF"
+            card_view:cardCornerRadius="10dp">
+
+            <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView2"
+            android:layout_width="170dp"
+            android:layout_height="151dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardCalendar"
+            card_view:cardBackgroundColor="#223D51"
+            card_view:cardCornerRadius="10dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/exerciseImage"
+                    android:layout_width="62dp"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="16dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/exercise_card"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.125"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/exerciseProgress"
+                    style="@style/TitleTextStyle"
+                    android:layout_width="80dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="100%"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="25sp"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/exerciseImage"
+                    app:layout_constraintTop_toBottomOf="@+id/exercise"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/exercise"
+                    style="@style/TitleTextStyle"
+                    android:layout_width="79dp"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="40dp"
+                    android:fontFamily="@font/cronus"
+                    android:text="PROGRESS:"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.277"
+                    app:layout_constraintStart_toEndOf="@+id/exerciseImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/exerciseButton"
+                    style="@style/FilledButton"
+                    android:layout_width="143dp"
+
+
+                    android:layout_height="35dp"
+                    android:text="DO EXERCISES"
+                    android:textSize="10dp"
+                    app:backgroundTint="#64A08B"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.448"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/exerciseImage"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="169dp"
+            android:layout_height="151dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toEndOf="@+id/cardView2"
+            app:layout_constraintTop_toBottomOf="@+id/cardCalendar"
+            card_view:cardBackgroundColor="#223D51"
+            card_view:cardCornerRadius="10dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/medicationImage"
+                    android:layout_width="69dp"
+                    android:layout_height="71dp"
+                    android:layout_marginTop="16dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/medication_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.125"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/medicationProgress"
+                    style="@style/TitleTextStyle"
+                    android:layout_width="80dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="100%"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="25sp"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/medicationImage"
+                    app:layout_constraintTop_toBottomOf="@+id/medication"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/medication"
+                    style="@style/TitleTextStyle"
+                    android:layout_width="79dp"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="40dp"
+                    android:fontFamily="@font/cronus"
+                    android:text="PROGRESS:"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.277"
+                    app:layout_constraintStart_toEndOf="@+id/medicationImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/signUpButton"
+                    style="@style/FilledButton"
+                    android:layout_width="143dp"
+
+
+                    android:layout_height="35dp"
+                    android:text="TAKE MEDICINES"
+                    android:textSize="10sp"
+                    app:backgroundTint="#64A08B"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/medicationImage"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardQuiz"
+            android:layout_width="352dp"
+            android:layout_height="137dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.487"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView2"
+            app:layout_constraintVertical_bias="0.0"
+            card_view:cardBackgroundColor="#223D51"
+            card_view:cardCornerRadius="10dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

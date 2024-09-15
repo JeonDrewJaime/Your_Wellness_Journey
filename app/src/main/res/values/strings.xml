@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Your Wellness Journey</string>
+    <string name="app_name">Your Journey</string>
     <string-array name="genders">
         <item>Male</item>
         <item>Female</item>

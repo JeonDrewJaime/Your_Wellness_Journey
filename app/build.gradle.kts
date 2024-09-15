@@ -37,6 +37,8 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.cardview:cardview:1.0.0")
+    implementation ("com.google.mediapipe:tasks-vision:latest.release")
     implementation("androidx.core:core-splashscreen:1.0.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -45,6 +47,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth)
+    implementation(libs.androidx.gridlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

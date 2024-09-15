@@ -5,21 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CalendarView
+import android.widget.TextView
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Home.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class Home : Fragment() {
-    // TODO: Rename and change types of parameters
+
     private var param1: String? = null
     private var param2: String? = null
+
+    private lateinit var exerciseProgress: TextView
+    private lateinit var medicationProgress: TextView
+    private lateinit var calendarView: CalendarView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,19 +35,30 @@ class Home : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        // Access CalendarView and TextViews
+        calendarView = view.findViewById(R.id.calendarView)
+        exerciseProgress = view.findViewById(R.id.exerciseProgress)
+        medicationProgress = view.findViewById(R.id.medicationProgress)
+
+        // Set up CalendarView listener
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            updateProgressTexts(year, month, dayOfMonth)
+        }
+        return view
     }
 
+    private fun updateProgressTexts(year: Int, month: Int, dayOfMonth: Int) {
+
+        val selectedDate = String.format("%d-%d-%d", year, month + 1, dayOfMonth)
+        val exerciseProgressText = "80%"
+        val medicationProgressText = "50%"
+        exerciseProgress.text = exerciseProgressText
+        medicationProgress.text = medicationProgressText
+    }
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Home.
-         */
-        // TODO: Rename and change types and number of parameters
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             Home().apply {

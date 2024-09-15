@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/white" /> <!-- Background color of the GridLayout -->
+    <corners android:topLeftRadius="16dp" android:topRightRadius="20dp" /> <!-- Adjust radius as needed -->
+</shape>

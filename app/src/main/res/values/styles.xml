@@ -40,4 +40,12 @@
         <item name="android:fontFamily">@font/oh_whale</item>
 
     </style>
+
+
+
+
+    <style name="CustomCalendarView" parent="ThemeOverlay.AppCompat">
+        <item name="android:calendarTextColor">#FFFFFF</item>
+
+    </style>
 </resources>
