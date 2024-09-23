@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="#223D51">
+
+
+    <ImageView
+        android:id="@+id/medicationImage"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/logo"
+        android:contentDescription="Medication Image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="30dp"
+
+        app:layout_constraintBottom_toBottomOf="@id/medicationDosage" />
+
+    <TextView
+        android:id="@+id/medicationName"
+        android:layout_width="213dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="30dp"
+        android:fontFamily="@font/oh_whale"
+        android:text="Medication Name"
+        android:textColor="@android:color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@id/medicationDosage"
+        app:layout_constraintEnd_toStartOf="@id/medicationButton"
+        app:layout_constraintStart_toEndOf="@id/medicationImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/medicationDosage"
+        android:layout_width="213dp"
+        android:layout_height="31dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/cronus"
+        android:text="Dosage Information"
+        android:textColor="@android:color/white"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toStartOf="@id/medicationButton"
+        app:layout_constraintStart_toEndOf="@id/medicationImage"
+        app:layout_constraintTop_toBottomOf="@id/medicationName" />
+
+    <Button
+        android:id="@+id/medicationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="#64A08B"
+        android:textSize="20dp"
+        style="@style/TitleTextStyle"
+        android:text="Done"
+        android:textColor="#223D51"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/medicationDosage"
+        android:layout_marginStart="8dp"
+     />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

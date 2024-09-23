@@ -2,7 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
+        android:name=".util.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -10,21 +20,36 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.YourWellnessJourney"
+        android:theme="@style/Theme.PoseExercise"
+        tools:remove="android:appComponentFactory"
         tools:targetApi="31">
         <activity
-            android:name=".Profile"
+            android:name=".views.activity.Cancel"
             android:exported="false" />
         <activity
-            android:name=".Dashboard"
+            android:name=".views.activity.Workout"
             android:exported="false" />
         <activity
-            android:name=".SignUp"
+            android:name=".views.activity.Profile"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".views.activity.Dashboard"
+            android:exported="false" />
+        <activity
+            android:name=".views.activity.SignUp"
+            android:exported="false" />
+        <activity
+            android:name=".views.activity.OnboardingActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.activity.MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.activity.SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.App.Splashscreen">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

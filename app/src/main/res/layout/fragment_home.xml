@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".Home">
+    tools:context=".views.fragment.Home">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,27 +16,38 @@
         <TextView
             android:id="@+id/textView2"
             style="@style/TitleTextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="113dp"
+            android:layout_height="25dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/cronus"
-            android:text="TODAY IS"
+            android:text="RESULTS AS OF:"
             android:textSize="20sp"
             app:layout_constraintStart_toEndOf="@+id/myImageView"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/dayToday"
+            android:id="@+id/dateToday"
             style="@style/TitleTextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="196dp"
+            android:layout_height="49dp"
             android:layout_marginStart="28dp"
-            android:layout_marginTop="4dp"
-            android:text="Day"
+            android:text="Date"
             android:textSize="45sp"
             app:layout_constraintStart_toEndOf="@+id/myImageView"
             app:layout_constraintTop_toBottomOf="@id/textView2" />
+
+        <TextView
+            android:id="@+id/dayToday2"
+            style="@style/TitleTextStyle"
+            android:layout_width="201dp"
+            android:layout_height="21dp"
+            android:layout_marginStart="28dp"
+            android:textColor="@color/black"
+            android:text="Select a day on the calendar to view results"
+            android:textSize="10sp"
+            card_view:layout_constraintStart_toEndOf="@+id/myImageView"
+            card_view:layout_constraintTop_toBottomOf="@id/dateToday" />
 
         <ImageView
             android:id="@+id/myImageView"
@@ -134,8 +145,6 @@
                     android:id="@+id/exerciseButton"
                     style="@style/FilledButton"
                     android:layout_width="143dp"
-
-
                     android:layout_height="35dp"
                     android:text="DO EXERCISES"
                     android:textSize="10dp"
@@ -215,11 +224,9 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
-                    android:id="@+id/signUpButton"
+                    android:id="@+id/medicineButton"
                     style="@style/FilledButton"
                     android:layout_width="143dp"
-
-
                     android:layout_height="35dp"
                     android:text="TAKE MEDICINES"
                     android:textSize="10sp"
@@ -248,7 +255,84 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView2"
             app:layout_constraintVertical_bias="0.0"
             card_view:cardBackgroundColor="#223D51"
-            card_view:cardCornerRadius="10dp" />
+            card_view:cardCornerRadius="10dp" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="142dp">
+
+                <TextView
+                    android:id="@+id/learn"
+                    style="@style/TitleTextStyle"
+                    android:layout_width="203dp"
+                    android:layout_height="17dp"
+                    android:layout_marginTop="28dp"
+                    android:fontFamily="@font/cronus"
+                    android:text="LEARN MORE ABOUT:"
+
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
+
+
+                    app:layout_constraintHorizontal_bias="0.448"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintStart_toEndOf="@+id/quizImage"
+                    card_view:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/disease"
+                    style="@style/TitleTextStyle"
+                    android:layout_width="203dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="12dp"
+
+
+                    android:layout_marginBottom="16dp"
+                    android:text="Disease"
+
+
+                    android:textColor="@color/white"
+                    android:textSize="30dp"
+
+                    app:layout_constraintBottom_toTopOf="@+id/quizButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintTop_toBottomOf="@+id/learn"
+                    app:layout_constraintVertical_bias="0.0"
+                    card_view:layout_constraintStart_toEndOf="@+id/quizImage" />
+
+                <ImageView
+                    android:id="@+id/quizImage"
+                    android:layout_width="106dp"
+                    android:layout_height="102dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/learn_image"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.058"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/quizButton"
+                    style="@style/FilledButton"
+                    android:layout_width="203dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="19dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="TAKE A QUIZ"
+                    android:textSize="12dp"
+
+                    app:backgroundTint="#64A08B"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/quizImage" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
