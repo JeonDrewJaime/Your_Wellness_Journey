@@ -2,6 +2,7 @@ package com.example.yourjourney.views.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -18,7 +20,6 @@ import java.util.*
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
-
 
 class Home : Fragment() {
 
@@ -57,7 +58,6 @@ class Home : Fragment() {
             loadUserProfile(uid)
         }
 
-
         calendarView = view.findViewById(R.id.calendarView)
         exerciseProgress = view.findViewById(R.id.exerciseProgress)
         medicationProgress = view.findViewById(R.id.medicationProgress)
@@ -66,17 +66,21 @@ class Home : Fragment() {
         takeQuizButton = view.findViewById(R.id.quizButton)
         dateToday = view.findViewById(R.id.dateToday)
 
-        val selectedDateInMillis = calendarView.date
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val selectedDate = dateFormat.format(Date(selectedDateInMillis))
-        dateToday.text = selectedDate
+        // Set the current date and load progress for today
+        val calendar = Calendar.getInstance()
+        updateProgressTexts(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH),
+            auth,
+            database
+        )
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            updateProgressTexts(year, month, dayOfMonth)
+            updateProgressTexts(year, month, dayOfMonth, auth, database)
         }
 
         doExercisesButton.setOnClickListener {
-
             val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNavigationView?.selectedItemId = R.id.navigation_exercise
         }
@@ -90,11 +94,11 @@ class Home : Fragment() {
             val intent = Intent(activity, Medication::class.java)
             startActivity(intent)
         }
+
         return view
     }
 
     private fun loadUserProfile(uid: String) {
-        // Reference to the user's data in the database
         val userRef = database.child(uid)
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -103,27 +107,40 @@ class Home : Fragment() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle possible errors
+                Toast.makeText(context, "Error loading user profile: ${databaseError.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
-    private fun updateProgressTexts(year: Int, month: Int, dayOfMonth: Int) {
 
-        val selectedDate = String.format("%d-%d-%d", year, month + 1, dayOfMonth)
-        val exerciseProgressText = "80%"
-        val medicationProgressText = "50%"
-        exerciseProgress.text = exerciseProgressText
-        medicationProgress.text = medicationProgressText
+    private fun updateProgressTexts(year: Int, month: Int, dayOfMonth: Int, auth: FirebaseAuth, database: DatabaseReference) {
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month, dayOfMonth)
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val selectedDate = dateFormat.format(calendar.time)
         dateToday.text = selectedDate
-    }
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Home().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
+        val currentUser = auth.currentUser
+        currentUser?.uid?.let { uid ->
+            val medicationRef = database.child(uid)
+                .child("medications").child(selectedDate).child("totalScore")
+            medicationRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        val medicationTotalScore = dataSnapshot.getValue(Int::class.java) ?: 0
+                        medicationProgress.text = "$medicationTotalScore%"
+                    } else {
+                        medicationProgress.text = "0%"
+
+                    }
                 }
-            }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    exerciseProgress.text = "Error"
+                    medicationProgress.text = "Error"
+                    Toast.makeText(context, "Database error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        }
     }
 }

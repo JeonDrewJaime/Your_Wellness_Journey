@@ -19,7 +19,7 @@
             android:layout_width="113dp"
             android:layout_height="25dp"
             android:layout_marginStart="28dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="13dp"
             android:fontFamily="@font/cronus"
             android:text="RESULTS AS OF:"
             android:textSize="20sp"
@@ -29,11 +29,11 @@
         <TextView
             android:id="@+id/dateToday"
             style="@style/TitleTextStyle"
-            android:layout_width="196dp"
-            android:layout_height="49dp"
+            android:layout_width="210dp"
+            android:layout_height="38dp"
             android:layout_marginStart="28dp"
             android:text="Date"
-            android:textSize="45sp"
+            android:textSize="35dp"
             app:layout_constraintStart_toEndOf="@+id/myImageView"
             app:layout_constraintTop_toBottomOf="@id/textView2" />
 
@@ -45,7 +45,7 @@
             android:layout_marginStart="28dp"
             android:textColor="@color/black"
             android:text="Select a day on the calendar to view results"
-            android:textSize="10sp"
+            android:textSize="10dp"
             card_view:layout_constraintStart_toEndOf="@+id/myImageView"
             card_view:layout_constraintTop_toBottomOf="@id/dateToday" />
 

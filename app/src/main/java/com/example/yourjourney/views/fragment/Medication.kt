@@ -76,70 +76,103 @@ class Medication : Fragment() {
             val userId = it.uid
             val userRef = database.getReference("users").child(userId)
 
-            userRef.child("disease").addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(diseaseSnapshot: DataSnapshot) {
-                    val disease = diseaseSnapshot.getValue(String::class.java)
+            // Fetch user's age
+            userRef.child("age").addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(ageSnapshot: DataSnapshot) {
+                    val age = ageSnapshot.getValue(Int::class.java) ?: 0 // Default age if not found
 
-                    userRef.child("stage").addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(stageSnapshot: DataSnapshot) {
-                            val stage = stageSnapshot.getValue(String::class.java)
+                    // Fetch user's disease
+                    userRef.child("disease").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(diseaseSnapshot: DataSnapshot) {
+                            val disease = diseaseSnapshot.getValue(String::class.java) ?: return
 
-                            if (disease != null && stage != null) {
-                                // Get today's date
-                                val calendar = Calendar.getInstance()
-                                val dayString = SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time) // Get day name
-                                dayToday.text = dayString // Set day in TextView
+                            // Define restricted medications based on both disease and age
+                            val restrictedMedicationsByDiseaseAndAge = mapOf(
+                                "Acute Lymphoblastic Leukemia" to mapOf(
+                                    4..5 to listOf("vincristine", "aspirin"),
+                                    2..6 to listOf("ibuprofen")
+                                ),
+                                "diseaseB" to mapOf(
+                                    3..5 to listOf("paracetamol")
+                                )
+                            )
 
-                                // Now use dayString for the reference
-                                val medicationsRef = database.getReference("diseases").child(disease).child(stage).child("Medicine").child(dayString)
+                            userRef.child("stage").addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(stageSnapshot: DataSnapshot) {
+                                    val stage = stageSnapshot.getValue(String::class.java)
 
-                                medicationsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onDataChange(medSnapshot: DataSnapshot) {
-                                        if (medSnapshot.exists()) {
-                                            for (med in medSnapshot.children) {
-                                                val name = med.key ?: continue
-                                                val img = med.child("image").getValue<String>() ?: continue
-                                                val dose = med.child("dosage").getValue<String>() ?: continue
+                                    if (disease != null && stage != null) {
+                                        // Get today's date
+                                        val calendar = Calendar.getInstance()
+                                        val dayString = SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time) // Get day name
+                                        dayToday.text = dayString // Set day in TextView
 
-                                                // Check if the medication has been marked as done
-                                                val doneRef = database.getReference("users").child(userId).child("medications")
-                                                    .child(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)).child(name)
+                                        // Reference to today's medications
+                                        val medicationsRef = database.getReference("diseases").child(disease).child(stage).child("Medicine").child(dayString)
 
-                                                doneRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                                                    override fun onDataChange(doneSnapshot: DataSnapshot) {
-                                                        val isDone = doneSnapshot.exists() && doneSnapshot.getValue(Boolean::class.java) == true
-                                                        val medication = Medicines(name, dose, img, isDone)
-                                                        medicationsList.add(medication)
-                                                        adapter.notifyDataSetChanged()
+                                        medicationsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                            override fun onDataChange(medSnapshot: DataSnapshot) {
+                                                if (medSnapshot.exists()) {
+                                                    for (med in medSnapshot.children) {
+                                                        val name = med.key ?: continue
+                                                        val img = med.child("image").getValue<String>() ?: continue
+                                                        val dose = med.child("dosage").getValue<String>() ?: continue
+
+                                                        // Check if this medication is restricted based on disease and age
+                                                        val diseaseRestrictions = restrictedMedicationsByDiseaseAndAge[disease]
+                                                        val isRestricted = diseaseRestrictions?.any { (ageRange, medNames) ->
+                                                            age in ageRange && medNames.any { medName -> name.equals(medName, ignoreCase = true) }
+                                                        } ?: false
+
+                                                        if (!isRestricted) {
+                                                            // Check if the medication has been marked as done
+                                                            val doneRef = database.getReference("users").child(userId).child("medications")
+                                                                .child(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)).child(name).child("done")
+
+                                                            doneRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                                                override fun onDataChange(doneSnapshot: DataSnapshot) {
+
+                                                                    val isDone = doneSnapshot.exists() && doneSnapshot.getValue(Boolean::class.java) == true
+                                                                        val medication = Medicines(name, dose, img,isDone)
+                                                                        medicationsList.add(medication)
+                                                                        adapter.notifyDataSetChanged()
+
+                                                                }
+
+                                                                override fun onCancelled(error: DatabaseError) {
+                                                                    // Handle errors
+                                                                }
+                                                            })
+                                                        }
                                                     }
-
-                                                    override fun onCancelled(error: DatabaseError) {
-                                                        // Handle errors
-                                                    }
-                                                })
+                                                } else {
+                                                    // Handle case where no medications are found
+                                                }
                                             }
-                                        } else {
-                                            // Handle case where no medications are found
-                                        }
-                                    }
 
-                                    override fun onCancelled(error: DatabaseError) {
-                                        // Handle errors fetching medications
+                                            override fun onCancelled(error: DatabaseError) {
+                                                // Handle errors fetching medications
+                                            }
+                                        })
+                                    } else {
+                                        // Handle case where disease or stage is not found
                                     }
-                                })
-                            } else {
-                                // Handle case where disease or stage is not found
-                            }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    // Handle errors fetching stage data
+                                }
+                            })
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            // Handle errors fetching stage data
+                            // Handle errors fetching user data
                         }
                     })
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle errors fetching user data
+                    // Handle errors fetching age data
                 }
             })
         }
@@ -153,32 +186,122 @@ class Medication : Fragment() {
 
         currentUser?.let {
             val userId = it.uid
-            val doneRef = database.getReference("users").child(userId).child("medications").child(currentDate).child(medicationName)
 
-            // Check if already marked
-            doneRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (!snapshot.exists()) {
-                        // Mark as done
-                        doneRef.setValue(true).addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
+            // Fetch the user's disease and stage
+            val userRef = database.getReference("users").child(userId)
+            userRef.child("disease").addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(diseaseSnapshot: DataSnapshot) {
+                    val disease = diseaseSnapshot.getValue(String::class.java) ?: return
 
-                                Toast.makeText(requireContext(), "$medicationName Recently done.", Toast.LENGTH_SHORT).show()
-                            } else {
-                                // Handle failure
-                            }
+                    userRef.child("stage").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(stageSnapshot: DataSnapshot) {
+                            val stage = stageSnapshot.getValue(String::class.java) ?: return
+
+                            // Get today's day of the week
+                            val dayString = SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time)
+
+                            // Reference to the medication's score in the diseases collection
+                            val scoreRef = database.getReference("diseases")
+                                .child(disease)
+                                .child(stage)
+                                .child("Medicine")
+                                .child(dayString)
+                                .child(medicationName)
+                                .child("score")
+
+                            // Fetch the score for the medication
+                            scoreRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(scoreSnapshot: DataSnapshot) {
+                                    if (scoreSnapshot.exists()) {
+                                        val medicationScore = scoreSnapshot.getValue(Int::class.java) ?: 0 // Default score if not found
+
+                                        // Now mark the medication as done
+                                        val doneRef = database.getReference("users")
+                                            .child(userId)
+                                            .child("medications")
+                                            .child(currentDate)
+                                            .child(medicationName)
+
+                                        // Check if already marked as done
+                                        doneRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                if (!snapshot.exists()) {
+                                                    // Mark as done and set the score for the specific medication
+                                                    val medicationData = mapOf(
+                                                        "done" to true,
+                                                        "score" to medicationScore // Add score only for the specific medication
+                                                    )
+
+                                                    // Update the medication as done
+                                                    doneRef.setValue(medicationData).addOnCompleteListener { task ->
+                                                        if (task.isSuccessful) {
+                                                            // Now update the total score for the date
+                                                            updateTotalScore(userId, currentDate, medicationScore)
+                                                        } else {
+                                                            Toast.makeText(requireContext(), "Failed to mark $medicationName as done.", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                } else {
+                                                    Toast.makeText(requireContext(), "$medicationName is already marked as done for today.", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+
+                                            override fun onCancelled(error: DatabaseError) {
+                                                Toast.makeText(requireContext(), "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        })
+                                    } else {
+                                        Toast.makeText(requireContext(), "Score not found for $medicationName.", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    Toast.makeText(requireContext(), "Error fetching medication score: ${error.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            })
                         }
-                    } else {
-                        // Already marked as done, show a message
-                        Toast.makeText(requireContext(), "$medicationName is already marked as done.", Toast.LENGTH_SHORT).show()
-                    }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Toast.makeText(requireContext(), "Error fetching stage: ${error.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle errors
+                    Toast.makeText(requireContext(), "Error fetching disease: ${error.message}", Toast.LENGTH_SHORT).show()
                 }
             })
         }
     }
+
+    private fun updateTotalScore(userId: String, currentDate: String, medicationScore: Int) {
+        val totalScoreRef = database.getReference("users")
+            .child(userId)
+            .child("medications")
+            .child(currentDate)
+            .child("totalScore")
+
+        // Fetch the existing total score for the date
+        totalScoreRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(totalScoreSnapshot: DataSnapshot) {
+                val currentTotalScore = totalScoreSnapshot.getValue(Int::class.java) ?: 0
+                val newTotalScore = currentTotalScore + medicationScore
+
+                // Update the total score for the specific date
+                totalScoreRef.setValue(newTotalScore).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(requireContext(), "Total score updated to $newTotalScore for $currentDate.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to update total score for $currentDate.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "Error fetching total score: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
 
 }
