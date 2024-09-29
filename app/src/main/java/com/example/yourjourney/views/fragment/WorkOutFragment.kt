@@ -405,14 +405,15 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                     val data = exerciseLog.getExerciseData(key)
                     if (key in onlyExercise && data == null) {
                         // Adding exercise for the first time
-                        exerciseLog.addExercise(
-                            null,
-                            key,
-                            value.repetition,
-                            value.confidence,
-                            false
-                        )
+                        exerciseLog.addExercise(null, key, value.repetition, value.confidence, false)
                     } else if (key in onlyExercise && value.repetition == data?.repetitions?.plus(1)) {
+                        // Check if the exercise is squats and update the repetition text view
+                        if (key == Postures.squat.type && value.repetition >= 5) {
+                            synthesizeSpeech("Nigga")
+                            currentRepetitionTextView.text = "Completed"
+                        } else {
+                            currentRepetitionTextView.text = "${value.repetition} Repetitions"
+                        }
                         workoutRecyclerView.visibility = View.VISIBLE
                         if (isAllWorkoutFinished) {
                             completeAllExercise.visibility = View.VISIBLE
@@ -422,28 +423,19 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         confIndicatorView.visibility = View.INVISIBLE
                         confidenceTextView.visibility = View.INVISIBLE
                         yogaPoseImage.visibility = View.INVISIBLE
-                        // check if the exercise target is complete
+                        // Check if the exercise target is complete
                         var repetition: Int? = databaseExercisePlan.find {
-                            it.exerciseName.equals(
-                                key,
-                                ignoreCase = true
-                            )
+                            it.exerciseName.equals(key, ignoreCase = true)
                         }?.repetitions
                         if (repetition == null || repetition == 0) {
                             repetition = HighCount
                         }
                         if (!data.isComplete && (value.repetition >= repetition)) {
-                            // Adding data only when the increment happen
-                            exerciseLog.addExercise(
-                                data.planId,
-                                key,
-                                value.repetition,
-                                value.confidence,
-                                true
-                            )
-                            // inform the user about completion only once
+                            // Adding data only when the increment happens
+                            exerciseLog.addExercise(data.planId, key, value.repetition, value.confidence, true)
+                            // Inform the user about completion only once
                             synthesizeSpeech(exerciseNameToDisplay(key) + " exercise Complete")
-                            // check if all the exercise list complete if yes tell all exercise is complete
+                            // Check if all the exercise list complete
                             if (exerciseLog.areAllExercisesCompleted(databaseExercisePlan)) {
                                 val handler = Handler(Looper.getMainLooper())
                                 handler.postDelayed({
@@ -455,42 +447,25 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                             // Update complete status for existing plan
                             if (data.planId != null) {
                                 lifecycleScope.launch(Dispatchers.IO) {
-                                    addPlanViewModel.updateComplete(
-                                        true,
-                                        System.currentTimeMillis(),
-                                        data.planId
-                                    )
+                                    addPlanViewModel.updateComplete(true, System.currentTimeMillis(), data.planId)
                                 }
                             }
                         } else if (data.isComplete) {
-                            // Adding data only when the increment happen
-                            exerciseLog.addExercise(
-                                data.planId,
-                                key,
-                                value.repetition,
-                                value.confidence,
-                                true
-                            )
+                            // Adding data only when the increment happens
+                            exerciseLog.addExercise(data.planId, key, value.repetition, value.confidence, true)
                         } else {
-                            // Adding data only when the increment happen
-                            exerciseLog.addExercise(
-                                data.planId,
-                                key,
-                                value.repetition,
-                                value.confidence,
-                                false
-                            )
+                            // Adding data only when the increment happens
+                            exerciseLog.addExercise(data.planId, key, value.repetition, value.confidence, false)
                         }
-                        // display Current result when the increment happen
+                        // Display Current result when the increment happens
                         displayResult(key, exerciseLog)
 
-                        // update the display list of all exercise progress when the increment happen
+                        // Update the display list of all exercise progress when the increment happens
                         val exerciseList = exerciseLog.getExerciseDataList()
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
                     } else if (key in onlyPose && value.confidence > 0.5) {
-
-                        if (key !== previousKey || value.confidence !== previousConfidence) {
+                        if (key != previousKey || value.confidence != previousConfidence) {
                             // Implementation of pose confidence
                             displayConfidence(key, value.confidence)
                             workoutRecyclerView.visibility = View.GONE
@@ -498,41 +473,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                             currentExerciseTextView.visibility = View.VISIBLE
                             currentRepetitionTextView.visibility = View.GONE
                             confidenceTextView.visibility = View.VISIBLE
-                            currentExerciseTextView.text = exerciseNameToDisplay(key)
-                            confidenceTextView.text = getString(
-                                R.string.confidence_percentage,
-                                (value.confidence * 100).toInt()
-                            )
-                            yogaPoseImage.visibility = View.VISIBLE
-
-                            if (key !== previousKey) {
-                                yogaPoseImage.setImageResource(getDrawableResourceIdYoga(key))
-                            }
-
-                            // Update previous values
-                            previousKey = key
-                            previousConfidence = value.confidence
                         }
-                    } else if (key == previousKey && value.confidence < 0.6) {
-                        confIndicatorView.visibility = View.INVISIBLE
-                        confidenceTextView.visibility = View.INVISIBLE
-                        yogaPoseImage.visibility = View.INVISIBLE
                     }
+                    previousKey = key
+                    previousConfidence = value.confidence
                 }
-            }
-
-            // Visualize list of all exercise result for the first time, to show the target exercise
-            if (!runOnce) {
-                val exerciseList = exerciseLog.getExerciseDataList()
-                workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
-                workoutRecyclerView.adapter = workoutAdapter
-                runOnce = true
-                loadingTV.visibility = View.GONE
-                loadProgress.visibility = View.GONE
-                synthesizeSpeech("ready to start")
-                startMediaTimer()
-                timerTextView.visibility = View.VISIBLE
-                timerRecordIcon.visibility = View.VISIBLE
             }
         }
     }

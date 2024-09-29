@@ -81,7 +81,7 @@ class Home : Fragment() {
         }
 
         doExercisesButton.setOnClickListener {
-            val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+       val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNavigationView?.selectedItemId = R.id.navigation_exercise
         }
 
@@ -123,24 +123,43 @@ class Home : Fragment() {
         currentUser?.uid?.let { uid ->
             val medicationRef = database.child(uid)
                 .child("medications").child(selectedDate).child("totalScore")
+            val exerciseRef = database.child(uid)
+                .child("exercises").child(selectedDate).child("totalScore")
+
+            // Fetching medication total score
             medicationRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        val medicationTotalScore = dataSnapshot.getValue(Int::class.java) ?: 0
-                        medicationProgress.text = "$medicationTotalScore%"
+                    val medicationTotalScore = if (dataSnapshot.exists()) {
+                        dataSnapshot.getValue(Int::class.java) ?: 0
                     } else {
-                        medicationProgress.text = "0%"
-
+                        0
                     }
+                    medicationProgress.text = "$medicationTotalScore%"
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    exerciseProgress.text = "Error"
                     medicationProgress.text = "Error"
                     Toast.makeText(context, "Database error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
                 }
             })
 
+            // Fetching exercise total score
+            exerciseRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val exerciseTotalScore = if (dataSnapshot.exists()) {
+                        dataSnapshot.getValue(Int::class.java) ?: 0
+                    } else {
+                        0
+                    }
+                    exerciseProgress.text = "$exerciseTotalScore%"
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    exerciseProgress.text = "Error"
+                    Toast.makeText(context, "Database error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
         }
     }
+
 }

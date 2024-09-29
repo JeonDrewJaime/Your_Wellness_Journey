@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.yourjourney.R
 import com.example.yourjourney.views.fragment.Diet
+import com.example.yourjourney.views.fragment.Exercise
 import com.example.yourjourney.views.fragment.Home
 import com.example.yourjourney.views.fragment.Medication
 import com.example.yourjourney.views.fragment.WorkOutFragment
@@ -53,7 +54,7 @@ class Dashboard : AppCompatActivity() {
         toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-
+        bottomNavigationView.getMenu().findItem(R.id.navigation_workout).setVisible(false);
         // Set Navigation Drawer Item Selected Listener
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -81,6 +82,11 @@ class Dashboard : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_exercise -> {
+                    replaceFragment(Exercise())
+                    true
+                }
+
+                R.id.navigation_workout -> {
                     replaceFragment(WorkOutFragment())
                     true
                 }

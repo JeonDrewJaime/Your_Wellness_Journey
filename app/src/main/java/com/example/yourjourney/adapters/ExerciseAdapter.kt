@@ -1,123 +1,60 @@
 package com.example.yourjourney.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.os.bundleOf
-import androidx.navigation.NavController
-import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.yourjourney.R
-import com.example.yourjourney.data.plan.Exercise
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.chip.Chip
+import com.example.yourjourney.data.plan.Exercises
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-/**
- * ExerciseAdapter: RecyclerView Adapter for displaying a list of exercises.
- *
- * This adapter is responsible for binding exercise data to the ViewHolder objects for each item
- * in the RecyclerView.
- *
- * @param context The context of the activity or fragment using the adapter.
- * @param navController The NavController for navigating to other fragments.
- */
-class ExerciseAdapter internal constructor(
-    context: Context,
-    private val navController: NavController
-) :
-    RecyclerView.Adapter<ExerciseAdapter.MyViewHolder>(), Filterable {
+class ExerciseAdapter(
+    private val context: Context,
+    private var exercises: List<Exercises>,
+    private val bottomNavigationView: BottomNavigationView
+) : ArrayAdapter<Exercises>(context, 0, exercises) {
 
-    private var exerciseList: List<Exercise> = emptyList()
-    var exerciseFilterList = mutableListOf<Exercise>()
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val exercise = getItem(position)
+        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.list_item_exercises, parent, false)
 
-    // This class defines the ViewHolder object for each item in the RecyclerView
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        init {
-            exerciseFilterList = exerciseList as MutableList<Exercise>
+        val nameTextView: TextView = view.findViewById(R.id.exerciseName)
+        val exerciseImageView: ImageView = view.findViewById(R.id.exerciseImage)
+        val performButton: Button = view.findViewById(R.id.performButton) // Button to perform exercise
+
+        // Set exercise name
+        nameTextView.text = exercise?.name
+
+        // Load image using Glide
+        Glide.with(context)
+            .load(exercise?.imageUrl)
+            .into(exerciseImageView)
+
+        // Set the button text
+        performButton.text = "Perform"
+
+        // Check if the exercise is marked as done
+        if (exercise?.isDone == true) {
+            // Disable the button and change its background color
+            performButton.isEnabled = false
+            performButton.setBackgroundColor(context.getColor(R.color.gray)) // Change to your desired color
+        } else {
+            // Enable the button and reset the background color (to the default)
+            performButton.isEnabled = true
+            performButton.setBackgroundColor(context.getColor(R.color.green)) // Change to your default button color
         }
 
-        val cardView: MaterialCardView = itemView.findViewById(R.id.card)
-        val name: TextView = itemView.findViewById(R.id.exercise_name)
-        val image: ImageView = itemView.findViewById(R.id.exercise_image)
-        val level: Chip = itemView.findViewById(R.id.chip)
-        val calorieBurned: TextView = itemView.findViewById(R.id.exercise_calories)
-    }
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ExerciseAdapter.MyViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.card_exercise_type, parent, false)
-        return MyViewHolder(itemView)
-    }
-
-    override fun getItemCount(): Int {
-        return exerciseFilterList.size
-    }
-
-    // This method binds the data to the ViewHolder object
-    // for each item in the RecyclerView
-    @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val currentExercise = exerciseFilterList[position]
-        holder.name.text = currentExercise.name
-        currentExercise.image?.let { holder.image.setImageResource(it) }
-        holder.level.text = currentExercise.level
-        holder.calorieBurned.text = "${currentExercise.calorie} kCal"
-        holder.level.isCheckable = false
-
-        // Set a click event listener for the CardView
-        holder.cardView.setOnClickListener {
-            // Create a bundle to hold data that need to pass to next fragment
-            val bundle = bundleOf(
-                "exerciseName" to currentExercise.name,
-                "caloriesPerRep" to currentExercise.calorie
-            )
-            // Navigate to another fragment using the NavController
-
+        // Set the button click listener to navigate to the Workout Fragment
+        performButton.setOnClickListener {
+            // Navigate to the Workout Fragment when the button is pressed
+            bottomNavigationView.selectedItemId = R.id.navigation_workout // Use the correct ID for the Workout Fragment
         }
-    }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun setExercises(exercises: List<Exercise>) {
-        this.exerciseList = exercises
-        exerciseFilterList = exercises as MutableList<Exercise>
-        notifyDataSetChanged()
-    }
-
-    override fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val charSearch = constraint.toString()
-                exerciseFilterList = if (charSearch.isEmpty()) {
-                    exerciseList as MutableList<Exercise>
-                } else {
-                    val resultList = mutableListOf<Exercise>()
-                    for (row in exerciseList) {
-                        if (row.level.lowercase().contains(charSearch.lowercase())) {
-                            resultList.add(row)
-                        }
-                    }
-                    resultList
-                }
-                val filterResults = FilterResults()
-                filterResults.values = exerciseFilterList
-                return filterResults
-            }
-
-            @SuppressLint("NotifyDataSetChanged")
-            @Suppress("UNCHECKED_CAST")
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                exerciseFilterList = results?.values as MutableList<Exercise>
-                notifyDataSetChanged()
-            }
-        }
+        return view
     }
 }
-

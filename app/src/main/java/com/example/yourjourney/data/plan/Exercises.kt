@@ -1,8 +1,7 @@
 package com.example.yourjourney.data.plan
 
-data class Medicines(
+data class Exercises(
     val name: String,
-    val dosage: String,
     val imageUrl: String,
     val isDone: Boolean = false
 )

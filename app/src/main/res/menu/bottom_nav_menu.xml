@@ -24,4 +24,11 @@
         android:id="@+id/navigation_medication"
         android:icon="@drawable/medication"
         android:title="Medication" />
+
+
+
+    <item
+        android:id="@+id/navigation_workout"
+        android:icon="@drawable/medication"
+        android:title="Workout" />
 </menu>
