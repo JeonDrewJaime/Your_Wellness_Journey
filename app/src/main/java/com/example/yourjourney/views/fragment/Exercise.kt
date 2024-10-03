@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.yourjourney.R
 import com.example.yourjourney.adapters.ExerciseAdapter
 import com.example.yourjourney.data.plan.Exercises
+import com.example.yourjourney.util.restrictedExercisesByDiseaseAndAge
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -82,15 +83,7 @@ class Exercise : Fragment() {
                     userRef.child("disease").addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(diseaseSnapshot: DataSnapshot) {
                             val disease = diseaseSnapshot.getValue(String::class.java) ?: return
-                            val restrictedExercisesByDiseaseAndAge = mapOf(
-                                "Acute Lymphoblastic Leukemia" to mapOf(
-                                    4..5 to listOf("Jumping Jacks", "Push-Ups"),
-                                    2..6 to listOf("Running")
-                                ),
-                                "diseaseB" to mapOf(
-                                    3..5 to listOf("Cycling")
-                                )
-                            )
+
 
                             userRef.child("stage").addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(stageSnapshot: DataSnapshot) {

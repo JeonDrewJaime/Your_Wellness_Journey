@@ -9,36 +9,37 @@
     android:background="@drawable/clouds_without_kids">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/day2"
         style="@style/TitleTextStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_width="202dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="52dp"
         android:text="SIGN-UP"
-        android:textSize="45dp"
+
+        android:textSize="45sp"
         app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/emailEditText"
-        android:layout_margin="35dp"
         style="@style/CustomEditTextStyle"
-        android:hint="E-mail"
-        android:inputType="textEmailAddress"
-        app:layout_constraintTop_toBottomOf="@id/textView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginTop="16dp"
+        android:hint="Email"
+
+        android:layout_height="41dp"
+        android:layout_margin="25dp"
+        android:layout_marginHorizontal="0dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/day2" />
 
     <EditText
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:layout_marginHorizontal="0dp"
         android:id="@+id/passwordEditText"
         style="@style/CustomEditTextStyle"
@@ -56,7 +57,7 @@
 
 
     <EditText
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:layout_marginHorizontal="0dp"
         android:id="@+id/confirmPasswordEditText"
         style="@style/CustomEditTextStyle"
@@ -78,7 +79,7 @@
         style="@style/CustomEditTextStyle"
         android:layout_width="100dp"
         android:layout_height="44dp"
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:layout_marginHorizontal="0dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
@@ -91,7 +92,7 @@
         style="@style/CustomEditTextStyle"
         android:layout_width="100dp"
         android:layout_height="44dp"
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:layout_marginHorizontal="0dp"
 
         android:layout_marginStart="20dp"
@@ -102,6 +103,7 @@
         android:hint="Middle Name"
         app:layout_constraintBottom_toTopOf="@+id/genderSpinner"
         app:layout_constraintEnd_toStartOf="@+id/lastNameEditText"
+        app:layout_constraintHorizontal_bias="0.392"
         app:layout_constraintStart_toEndOf="@+id/firstNameEditText"
         app:layout_constraintTop_toBottomOf="@id/confirmPasswordEditText"
         app:layout_constraintVertical_bias="1.0" />
@@ -111,7 +113,7 @@
         style="@style/CustomEditTextStyle"
         android:layout_width="100dp"
         android:layout_height="44dp"
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:layout_marginHorizontal="0dp"
         android:layout_marginTop="32dp"
         android:hint="Last Name"
@@ -123,7 +125,7 @@
     <Spinner
 
         style="@style/CustomSpinnerStyle"
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:id="@+id/genderSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -138,7 +140,7 @@
         android:id="@+id/monthSpinner"
         style="@style/CustomSpinnerStyle"
         android:layout_width="100dp"
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/genderSpinner" />
 
@@ -147,7 +149,7 @@
         android:id="@+id/daySpinner"
         style="@style/CustomSpinnerStyle"
         android:layout_width="100dp"
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/genderSpinner"
@@ -159,7 +161,7 @@
         android:id="@+id/yearSpinner"
         style="@style/CustomSpinnerStyle"
         android:layout_width="100dp"
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:layout_marginHorizontal="0dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="12dp"
@@ -172,11 +174,41 @@
         style="@style/CustomSpinnerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="35dp"
+        android:layout_margin="25dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/monthSpinner" />
+
+    <Spinner
+        android:id="@+id/stageSpinner"
+        style="@style/CustomSpinnerStyle"
+        android:layout_width="157dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:layout_marginStart="32dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/diseaseSpinner" />
+
+
+    <EditText
+        android:id="@+id/ageEditText"
+        style="@style/CustomEditTextStyle"
+        android:layout_width="157dp"
+        android:layout_height="42dp"
+        android:layout_margin="25dp"
+        android:layout_marginHorizontal="0dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="16dp"
+        android:hint="Age"
+
+
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/stageSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/diseaseSpinner" />
 
     <Button
         android:id="@+id/signUpButton"
@@ -192,7 +224,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/diseaseSpinner" />
+        app:layout_constraintTop_toBottomOf="@id/stageSpinner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

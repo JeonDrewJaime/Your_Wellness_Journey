@@ -66,16 +66,22 @@ import com.example.yourjourney.viewmodels.AddPlanViewModel
 import com.example.yourjourney.viewmodels.CameraXViewModel
 import com.example.yourjourney.viewmodels.HomeViewModel
 import com.example.yourjourney.viewmodels.ResultViewModel
-import com.example.yourjourney.views.activity.Cancel
 import com.example.yourjourney.views.activity.MainActivity
 import com.example.yourjourney.views.fragment.preference.PreferenceUtils
 import com.example.yourjourney.views.graphic.GraphicOverlay
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.mlkit.common.MlKitException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.Timer
@@ -83,6 +89,8 @@ import java.util.TimerTask
 
 
 class WorkOutFragment : Fragment(), MemoryManagement {
+    private val database = FirebaseDatabase.getInstance()
+    private val auth = FirebaseAuth.getInstance()
     private var screenOn = false
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
@@ -163,7 +171,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         // Linking all button and controls
         cameraFlipFAB = view.findViewById(R.id.facing_switch)
         startButton = view.findViewById(R.id.button_start_exercise)
-        buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
+
         buttonCancelExercise = view.findViewById(R.id.button_cancel_exercise)
         timerTextView = view.findViewById(R.id.timerTV)
         timerRecordIcon = view.findViewById(R.id.timerRecIcon)
@@ -217,8 +225,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         buttonCancelExercise.setOnClickListener {
             synthesizeSpeech("Workout Cancelled")
             stopMediaTimer()
-            val intent = Intent(activity, Cancel::class.java)
-            startActivity(intent)
+            val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            bottomNavigationView?.selectedItemId = R.id.navigation_exercise
             screenOn = false
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -397,6 +405,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         var previousKey: String? = null
         var previousConfidence: Float? = null
 
+
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
             for ((key, value) in mapResult) {
                 // Visualize the repetition exercise data
@@ -408,9 +417,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         exerciseLog.addExercise(null, key, value.repetition, value.confidence, false)
                     } else if (key in onlyExercise && value.repetition == data?.repetitions?.plus(1)) {
                         // Check if the exercise is squats and update the repetition text view
-                        if (key == Postures.squat.type && value.repetition >= 5) {
-                            synthesizeSpeech("Nigga")
-                            currentRepetitionTextView.text = "Completed"
+                        if (key == Postures.squat.type && value.repetition == 5) {
+                            synthesizeSpeech("Congratulation! Squat completed.")
+                            markExerciseAsDone("Squats")
                         } else {
                             currentRepetitionTextView.text = "${value.repetition} Repetitions"
                         }
@@ -482,7 +491,127 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         }
     }
 
+    private fun markExerciseAsDone(exerciseName: String) {
+        val currentUser = auth.currentUser
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDate = dateFormat.format(calendar.time)
+        currentUser?.let {
+            val userId = it.uid
+            val userRef = database.getReference("users").child(userId)
+            userRef.child("disease").addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(diseaseSnapshot: DataSnapshot) {
+                    val disease = diseaseSnapshot.getValue(String::class.java) ?: return
 
+                    userRef.child("stage").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(stageSnapshot: DataSnapshot) {
+                            val stage = stageSnapshot.getValue(String::class.java) ?: return
+                            val dayString = SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time)
+                            // Reference to the exercise's score in the diseases collection
+                            val scoreRef = database.getReference("diseases")
+                                .child(disease)
+                                .child(stage)
+                                .child("Exercise")
+                                .child(dayString)
+                                .child(exerciseName)
+                                .child("score")
+
+                            // Fetch the score for the exercise
+                            scoreRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(scoreSnapshot: DataSnapshot) {
+                                    if (scoreSnapshot.exists()) {
+                                        val exerciseScore = scoreSnapshot.getValue(Int::class.java) ?: 0 // Default score if not found
+
+                                        // Now mark the exercise as done
+                                        val doneRef = database.getReference("users")
+                                            .child(userId)
+                                            .child("exercises")
+                                            .child(currentDate)
+                                            .child(exerciseName)
+
+                                        // Check if already marked as done
+                                        doneRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                if (!snapshot.exists()) {
+                                                    // Mark as done and set the score for the specific exercise
+                                                    val exerciseData = mapOf(
+                                                        "done" to true,
+                                                        "score" to exerciseScore // Add score only for the specific exercise
+                                                    )
+
+                                                    // Update the exercise as done
+                                                    doneRef.setValue(exerciseData).addOnCompleteListener { task ->
+                                                        if (task.isSuccessful) {
+                                                            // Now update the total score for the date
+                                                            updateTotalScore(userId, currentDate, exerciseScore)
+                                                        } else {
+                                                            Toast.makeText(requireContext(), "Failed to mark $exerciseName as done.", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                } else {
+                                                    Toast.makeText(requireContext(), "$exerciseName is already marked as done for today.", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+
+                                            override fun onCancelled(error: DatabaseError) {
+                                                Toast.makeText(requireContext(), "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        })
+                                    } else {
+                                        Toast.makeText(requireContext(), "Score not found for $exerciseName.", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    Toast.makeText(requireContext(), "Error fetching exercise score: ${error.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            })
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Toast.makeText(requireContext(), "Error fetching stage: ${error.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(requireContext(), "Error fetching disease: ${error.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
+
+    private fun updateTotalScore(userId: String, currentDate: String, exerciseScore: Int) {
+        val totalScoreRef = database.getReference("users")
+            .child(userId)
+            .child("exercises")
+            .child(currentDate)
+            .child("totalScore")
+
+        // Fetch the existing total score for the date
+        totalScoreRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(totalScoreSnapshot: DataSnapshot) {
+                val currentTotalScore = totalScoreSnapshot.getValue(Int::class.java) ?: 0
+                val newTotalScore = currentTotalScore + exerciseScore
+
+                // Update the total score for the specific date
+                totalScoreRef.setValue(newTotalScore).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(requireContext(), "Total score updated to $newTotalScore for $currentDate.", Toast.LENGTH_SHORT).show()
+                        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+                        bottomNavigationView?.selectedItemId = R.id.navigation_exercise
+
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to update total score for $currentDate.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "Error fetching total score: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
     // Map the notCompletedExercise list to a list of pairs to show gifs
     private fun mapExerciseToDrawable(exercise: String): Int {
         return when (exercise) {
@@ -633,7 +762,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                     val rescaleZ =
                         PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(requireContext())
 
-                    // Build Pose Detector Processor based on the settings/preferences
                     PoseDetectorProcessor(
                         requireContext(),
                         poseDetectorOptions,

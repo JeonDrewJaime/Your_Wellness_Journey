@@ -35,11 +35,12 @@
 
     <Button
         android:id="@+id/skipButton"
+        style="@style/FilledButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/skip"
+        android:text="SKIP"
         android:textColor="@color/white"
-        app:backgroundTint="@color/primaryColor"
+        app:backgroundTint="#64A08B"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

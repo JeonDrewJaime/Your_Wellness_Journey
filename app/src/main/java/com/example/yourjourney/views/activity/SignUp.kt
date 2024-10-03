@@ -38,17 +38,38 @@ class SignUp : AppCompatActivity() {
         setupSpinner(R.id.daySpinner, resources.getStringArray(R.array.days))
         setupSpinner(R.id.yearSpinner, resources.getStringArray(R.array.years))
         setupSpinner(R.id.diseaseSpinner, resources.getStringArray(R.array.diseases))
+        setupSpinner(R.id.stageSpinner, resources.getStringArray(R.array.stages))
 
         findViewById<Button>(R.id.signUpButton).setOnClickListener {
             val email = findViewById<EditText>(R.id.emailEditText).text.toString()
             val password = findViewById<EditText>(R.id.passwordEditText).text.toString()
             val confirmPassword = findViewById<EditText>(R.id.confirmPasswordEditText).text.toString()
+            val firstName = findViewById<EditText>(R.id.firstNameEditText).text.toString()
+            val middleName = findViewById<EditText>(R.id.middleNameEditText).text.toString()
+            val lastName = findViewById<EditText>(R.id.lastNameEditText).text.toString()
+            val ageString = findViewById<EditText>(R.id.ageEditText).text.toString()
 
+            // Check for empty fields
+            if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() ||
+                firstName.isEmpty() || middleName.isEmpty() || lastName.isEmpty() ||
+                ageString.isEmpty() || findViewById<Spinner>(R.id.genderSpinner).selectedItemPosition == 0 ||
+                findViewById<Spinner>(R.id.monthSpinner).selectedItemPosition == 0 ||
+                findViewById<Spinner>(R.id.daySpinner).selectedItemPosition == 0 ||
+                findViewById<Spinner>(R.id.yearSpinner).selectedItemPosition == 0 ||
+                findViewById<Spinner>(R.id.diseaseSpinner).selectedItemPosition == 0 ||
+                findViewById<Spinner>(R.id.stageSpinner).selectedItemPosition == 0
+            ) {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Validate password confirmation
             if (password == confirmPassword) {
                 createUser(email, password)
             } else {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
             }
+
         }
     }
 
@@ -66,8 +87,10 @@ class SignUp : AppCompatActivity() {
                     val birthDay = findViewById<Spinner>(R.id.daySpinner).selectedItem.toString()
                     val birthYear = findViewById<Spinner>(R.id.yearSpinner).selectedItem.toString()
                     val disease = findViewById<Spinner>(R.id.diseaseSpinner).selectedItem.toString()
-
-                    val user = User(firstName, middleName, lastName, gender,birthMonth,birthDay,birthYear,disease)
+                    val stage = findViewById<Spinner>(R.id.stageSpinner).selectedItem.toString()
+                    val ageString = findViewById<EditText>(R.id.ageEditText).text.toString()
+                    val age = ageString.toIntOrNull() ?: 0 // Default to 0 if parsing fails
+                    val user = User(firstName, middleName, lastName, gender,birthMonth,birthDay,birthYear,disease,stage,age)
                     userId?.let {
                         database.child("users").child(it).setValue(user)
                             .addOnSuccessListener {
@@ -104,5 +127,7 @@ class SignUp : AppCompatActivity() {
         val birthDay: String,
         val birthYear: String,
         val disease: String,
+        val stage: String,
+        val age: Int,
     )
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.yourjourney.R
 import com.example.yourjourney.adapters.MedicationAdapter
 import com.example.yourjourney.data.plan.Medicines
+import com.example.yourjourney.util.restrictedMedicationsByDiseaseAndAge
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
@@ -87,15 +88,7 @@ class Medication : Fragment() {
                             val disease = diseaseSnapshot.getValue(String::class.java) ?: return
 
                             // Define restricted medications based on both disease and age
-                            val restrictedMedicationsByDiseaseAndAge = mapOf(
-                                "Acute Lymphoblastic Leukemia" to mapOf(
-                                    4..5 to listOf("vincristine", "aspirin"),
-                                    2..6 to listOf("ibuprofen")
-                                ),
-                                "diseaseB" to mapOf(
-                                    3..5 to listOf("paracetamol")
-                                )
-                            )
+
 
                             userRef.child("stage").addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(stageSnapshot: DataSnapshot) {

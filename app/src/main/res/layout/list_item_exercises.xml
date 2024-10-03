@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@android:color/transparent">
+
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -6,7 +16,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
-    android:background="#223D51">
+
+    android:background="@drawable/border">
 
     <ImageView
         android:id="@+id/exerciseImage"
@@ -18,7 +29,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/exerciseName"
-        app:layout_constraintHorizontal_chainStyle="packed" />
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:background="@drawable/border"/>
 
     <!-- Exercise Name (TextView) -->
     <TextView
@@ -52,3 +64,4 @@
         app:layout_constraintHorizontal_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

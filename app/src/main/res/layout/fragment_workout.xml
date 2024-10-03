@@ -121,23 +121,6 @@
             app:tint="@color/white" />
 
         <!-- Complete Exercise Button -->
-        <Button
-            android:id="@+id/button_complete_exercise"
-            style="@style/FilledButton"
-            android:layout_width="98dp"
-            android:layout_height="51dp"
-            android:text="@string/complete_button"
-            android:textColor="@color/white"
-            android:visibility="invisible"
-            app:backgroundTint="@color/blueButton"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.9"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.85"
-            app:pressedTranslationZ="6dp"
-            app:tint="@color/white" />
 
         <!-- RecyclerView for Workout Exercise List -->
         <androidx.recyclerview.widget.RecyclerView
