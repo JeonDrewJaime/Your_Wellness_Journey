@@ -75,33 +75,35 @@ class Home : Fragment() {
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
 
         // Enable or disable the button based on the day of the week
-        val isMondayOrSunday = (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.SUNDAY)
+        val isMondayOrSunday = (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.FRIDAY)
 
         assesmentButton.isEnabled = isMondayOrSunday
 
         // Change the background tint based on whether the button is enabled or not
-        if (isMondayOrSunday) {
+        if  (dayOfWeek == Calendar.MONDAY) {
             assesmentButton.text = "Take Pre-Assesment"
             assesmentButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green)
-        } else {
+        }
+        else if (dayOfWeek == Calendar.FRIDAY) {
+            assesmentButton.text = "Take Post-Assesment"
+            assesmentButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green)
+        }
+        else {
             assesmentButton.text = "Available on Monday/Tuesday"
             assesmentButton.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
         }
 
         assesmentButton.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-
             if (dayOfWeek == Calendar.MONDAY) {
                 val intent = Intent(activity, PreAssessment::class.java)
                 startActivity(intent)
-            } else if (dayOfWeek == Calendar.SUNDAY) {
-                // Navigate to ExerciseActivity if it's Sunday
+            } else if (dayOfWeek == Calendar.FRIDAY) {
                 val intent = Intent(activity, PostAssessment::class.java)
                 startActivity(intent)
             }
-
-
+            else {
+                Toast.makeText(context, "Assessment available only on Monday and Friday", Toast.LENGTH_SHORT).show()
+            }
         }
 
 
@@ -127,10 +129,7 @@ class Home : Fragment() {
             bottomNavigationView?.selectedItemId = R.id.navigation_medication
         }
 
-        assesmentButton.setOnClickListener {
-            val intent = Intent(activity, Medication::class.java)
-            startActivity(intent)
-        }
+
 
         return view
     }
