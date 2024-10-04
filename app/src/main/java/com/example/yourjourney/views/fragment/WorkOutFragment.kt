@@ -132,7 +132,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var addPlanViewModel: AddPlanViewModel
     private lateinit var startButton: Button
-    private lateinit var buttonCompleteExercise: Button
+
     private lateinit var buttonCancelExercise: Button
     private lateinit var cameraFlipFAB: FloatingActionButton
     private lateinit var confIndicatorView: ImageView
@@ -214,7 +214,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             cameraFlipFAB.visibility = View.GONE
             gifContainer.visibility = View.VISIBLE
             buttonCancelExercise.visibility = View.VISIBLE
-            buttonCompleteExercise.visibility = View.VISIBLE
+
             startButton.visibility = View.GONE
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -244,70 +244,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         val deadLift = Postures.deadlift
         val shoulderPress = Postures.shoulderpress
 
-        buttonCompleteExercise.setOnClickListener {
-            synthesizeSpeech("Workout Complete")
-            cameraViewModel.postureLiveData.value?.let {
-                //val builder = StringBuilder()
-                for ((_, value) in it) {
-                    if (value.repetition != 0) {
-                        lifecycleScope.launch {
-                            val calorie = when (value.postureType) {
-                                sitUp.type -> sitUp.value / 10
-                                pushUp.type -> pushUp.value / 10
-                                lunge.type -> lunge.value / 10
-                                squat.type -> squat.value / 10
-                                chestPress.type -> chestPress.value / 10
-                                deadLift.type -> deadLift.value / 10
-                                shoulderPress.type -> shoulderPress.value / 10
-                                else -> 0.0
-                            }
-                            val workoutTime =
-                                convertTimeStringToMinutes(timerTextView.text.toString())
 
-                            val workOutResult = WorkoutResult(
-                                0,
-                                value.postureType,
-                                value.repetition,
-                                value.confidence,
-                                System.currentTimeMillis(),
-                                calorie * value.repetition,
-                                workoutTime
-                            )
-                            resultViewModel.insert(workOutResult)
-                        }
-                    }
-                }
-            }
-
-            // update the workoutTimer in MainActivity
-            val currentTimer = timerTextView.text.toString()
-
-
-            stopMediaTimer()
-
-            // Set the screenOn flag to false, allowing the screen to turn off
-            screenOn = false
-
-            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
-            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-            // update the workoutResultData in MainActivity
-            cameraViewModel.postureLiveData.value?.let {
-                val builder = StringBuilder()
-                for ((key, value) in it) {
-                    if (value.repetition != 0 && key in onlyExercise) {
-                        builder.append("${exerciseNameToDisplay(value.postureType)}: ${value.repetition}\n")
-                    } else if (key in onlyPose) {
-                        builder.append("${exerciseNameToDisplay(value.postureType)}\n")
-                    }
-                }
-
-            }
-
-            // stop triggering classification process
-            cameraViewModel.triggerClassification.value = false
-
-        }
 
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
             cameraProvider = provider
@@ -1045,7 +982,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             mRecTimer = null
         }
         startButton.setOnClickListener(null)
-        buttonCompleteExercise.setOnClickListener(null)
+
         buttonCancelExercise.setOnClickListener(null)
         cameraFlipFAB.setOnClickListener(null)
         skipButton.setOnClickListener(null)

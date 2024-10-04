@@ -23,36 +23,49 @@
         android:theme="@style/Theme.PoseExercise"
         tools:remove="android:appComponentFactory"
         tools:targetApi="31">
+
+        <!-- Activities Locked to Portrait Mode -->
         <activity
-            android:name=".views.activity.Cancel"
+            android:screenOrientation="portrait"
+            android:name=".views.activity.PostAssessment"
             android:exported="false" />
+
         <activity
-            android:name=".views.activity.Workout"
+            android:screenOrientation="portrait"
+            android:name=".views.activity.PreAssessment"
             android:exported="false" />
+
         <activity
+            android:screenOrientation="portrait"
             android:name=".views.activity.Profile"
             android:exported="false" />
+
         <activity
+            android:screenOrientation="portrait"
             android:name=".views.activity.Dashboard"
             android:exported="false" />
+
         <activity
+            android:screenOrientation="portrait"
             android:name=".views.activity.SignUp"
             android:exported="false" />
+
         <activity
+            android:screenOrientation="portrait"
             android:name=".views.activity.OnboardingActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
+
         <activity
+            android:screenOrientation="portrait"
             android:name=".views.activity.MainActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
+
         <activity
+            android:screenOrientation="portrait"
             android:name=".views.activity.SplashActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

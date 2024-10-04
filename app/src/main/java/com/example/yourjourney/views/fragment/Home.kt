@@ -1,6 +1,7 @@
 package com.example.yourjourney.views.fragment
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +13,9 @@ import android.widget.Button
 import android.widget.CalendarView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.example.yourjourney.views.activity.PostAssessment
+import com.example.yourjourney.views.activity.PreAssessment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -31,7 +35,7 @@ class Home : Fragment() {
     private lateinit var calendarView: CalendarView
     private lateinit var doExercisesButton: Button
     private lateinit var takeMedicineButton: Button
-    private lateinit var takeQuizButton: Button
+    private lateinit var assesmentButton: Button
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
     private lateinit var dateToday: TextView
@@ -63,11 +67,44 @@ class Home : Fragment() {
         medicationProgress = view.findViewById(R.id.medicationProgress)
         doExercisesButton = view.findViewById(R.id.exerciseButton)
         takeMedicineButton = view.findViewById(R.id.medicineButton)
-        takeQuizButton = view.findViewById(R.id.quizButton)
+        assesmentButton= view.findViewById(R.id.assesmentButton)
         dateToday = view.findViewById(R.id.dateToday)
 
-        // Set the current date and load progress for today
+
         val calendar = Calendar.getInstance()
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+
+        // Enable or disable the button based on the day of the week
+        val isMondayOrSunday = (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.SUNDAY)
+
+        assesmentButton.isEnabled = isMondayOrSunday
+
+        // Change the background tint based on whether the button is enabled or not
+        if (isMondayOrSunday) {
+            assesmentButton.text = "Take Pre-Assesment"
+            assesmentButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green)
+        } else {
+            assesmentButton.text = "Available on Monday/Tuesday"
+            assesmentButton.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
+        }
+
+        assesmentButton.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+
+            if (dayOfWeek == Calendar.MONDAY) {
+                val intent = Intent(activity, PreAssessment::class.java)
+                startActivity(intent)
+            } else if (dayOfWeek == Calendar.SUNDAY) {
+                // Navigate to ExerciseActivity if it's Sunday
+                val intent = Intent(activity, PostAssessment::class.java)
+                startActivity(intent)
+            }
+
+
+        }
+
+
         updateProgressTexts(
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -90,7 +127,7 @@ class Home : Fragment() {
             bottomNavigationView?.selectedItemId = R.id.navigation_medication
         }
 
-        takeQuizButton.setOnClickListener {
+        assesmentButton.setOnClickListener {
             val intent = Intent(activity, Medication::class.java)
             startActivity(intent)
         }
@@ -143,7 +180,7 @@ class Home : Fragment() {
                 }
             })
 
-            // Fetching exercise total score
+
             exerciseRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val exerciseTotalScore = if (dataSnapshot.exists()) {
@@ -161,5 +198,4 @@ class Home : Fragment() {
             })
         }
     }
-
 }

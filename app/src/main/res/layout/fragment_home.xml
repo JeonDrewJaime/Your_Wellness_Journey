@@ -294,7 +294,7 @@
                     android:textColor="@color/white"
                     android:textSize="30dp"
 
-                    app:layout_constraintBottom_toTopOf="@+id/quizButton"
+                    app:layout_constraintBottom_toTopOf="@+id/assesmentButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintTop_toBottomOf="@+id/learn"
@@ -315,13 +315,13 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
-                    android:id="@+id/quizButton"
+                    android:id="@+id/assesmentButton"
                     style="@style/FilledButton"
                     android:layout_width="203dp"
                     android:layout_height="36dp"
                     android:layout_marginStart="19dp"
                     android:layout_marginBottom="16dp"
-                    android:text="TAKE A QUIZ"
+                    android:text="TAKE PRE-ASSESMENT"
                     android:textSize="12dp"
 
                     app:backgroundTint="#64A08B"
