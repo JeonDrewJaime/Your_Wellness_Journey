@@ -46,7 +46,7 @@ class MedicationAdapter(
             // Medication is not done, set the button to be clickable
             medicationButton.text = "Done"
             medicationButton.isEnabled = true
-            medicationButton.setBackgroundColor(context.getColor(R.color.green)) // Set default color for active button
+            medicationButton.setBackgroundColor(context.getColor(R.color.default_color)) // Set default color for active button
 
             // Set the button click listener
             medicationButton.setOnClickListener {

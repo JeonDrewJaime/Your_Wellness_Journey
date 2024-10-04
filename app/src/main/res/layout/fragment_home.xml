@@ -145,9 +145,10 @@
                     android:id="@+id/exerciseButton"
                     style="@style/FilledButton"
                     android:layout_width="143dp"
-                    android:layout_height="35dp"
+                    android:layout_height="0dp"
                     android:text="DO EXERCISES"
                     android:textSize="10dp"
+
                     app:backgroundTint="#64A08B"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -268,12 +269,9 @@
                     android:layout_height="17dp"
                     android:layout_marginTop="28dp"
                     android:fontFamily="@font/cronus"
-                    android:text="LEARN MORE ABOUT:"
-
+                    android:text="TEST YOUR KNOWLEDGE ABOUT:"
                     android:textColor="@color/white"
                     android:textSize="15dp"
-
-
                     app:layout_constraintHorizontal_bias="0.448"
                     card_view:layout_constraintEnd_toEndOf="parent"
                     card_view:layout_constraintStart_toEndOf="@+id/quizImage"
@@ -292,7 +290,7 @@
 
 
                     android:textColor="@color/white"
-                    android:textSize="30dp"
+                    android:textSize="30sp"
 
                     app:layout_constraintBottom_toTopOf="@+id/assesmentButton"
                     app:layout_constraintEnd_toEndOf="parent"

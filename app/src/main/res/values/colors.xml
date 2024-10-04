@@ -14,5 +14,6 @@
     <color name="green">#00B312</color>
     <color name="darker_color">#3F587D</color> <!-- Darker color for selected state -->
     <color name="lighter_color">#5E87AC</color> <!-- Lighter color for unselected state -->
+    <color name="default_color">#64A08B</color>
 
 </resources>

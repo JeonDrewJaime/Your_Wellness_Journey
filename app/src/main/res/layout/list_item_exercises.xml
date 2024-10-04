@@ -24,6 +24,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/logo"
+
         android:contentDescription="Exercise Image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -40,6 +41,7 @@
         android:fontFamily="@font/oh_whale"
         android:text="Exercise Name"
         android:textColor="@android:color/white"
+        android:layout_marginLeft="10dp"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@id/exerciseImage"
         app:layout_constraintEnd_toStartOf="@id/performButton"

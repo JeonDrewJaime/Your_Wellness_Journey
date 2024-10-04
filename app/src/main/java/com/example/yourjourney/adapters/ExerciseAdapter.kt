@@ -46,7 +46,7 @@ class ExerciseAdapter(
         } else {
             // Enable the button and reset the background color (to the default)
             performButton.isEnabled = true
-            performButton.setBackgroundColor(context.getColor(R.color.green)) // Change to your default button color
+            performButton.setBackgroundColor(context.getColor(R.color.default_color)) // Change to your default button color
         }
 
         // Set the button click listener to navigate to the Workout Fragment

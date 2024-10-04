@@ -75,18 +75,18 @@ class Home : Fragment() {
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
 
         // Enable or disable the button based on the day of the week
-        val isMondayOrSunday = (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.FRIDAY)
+        val isMondayOrSunday = (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.SATURDAY)
 
         assesmentButton.isEnabled = isMondayOrSunday
 
         // Change the background tint based on whether the button is enabled or not
         if  (dayOfWeek == Calendar.MONDAY) {
             assesmentButton.text = "Take Pre-Assesment"
-            assesmentButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green)
+            assesmentButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.default_color)
         }
-        else if (dayOfWeek == Calendar.FRIDAY) {
+        else if (dayOfWeek == Calendar.SATURDAY) {
             assesmentButton.text = "Take Post-Assesment"
-            assesmentButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green)
+            assesmentButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.default_color)
         }
         else {
             assesmentButton.text = "Available on Monday/Tuesday"
@@ -97,7 +97,7 @@ class Home : Fragment() {
             if (dayOfWeek == Calendar.MONDAY) {
                 val intent = Intent(activity, PreAssessment::class.java)
                 startActivity(intent)
-            } else if (dayOfWeek == Calendar.FRIDAY) {
+            } else if (dayOfWeek == Calendar.SATURDAY) {
                 val intent = Intent(activity, PostAssessment::class.java)
                 startActivity(intent)
             }

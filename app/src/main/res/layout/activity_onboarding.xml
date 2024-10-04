@@ -32,17 +32,18 @@
             app:dotsSpacing="4dp"
             app:dotsWidthFactor="2.5"
             app:progressMode="true"
-            app:selectedDotColor="@color/primaryColor" />
+            app:selectedDotColor="@color/default_color" />
 
         <!-- Next Button to navigate to the next onboarding screen -->
         <Button
             android:id="@+id/nextButton"
+            style="@style/FilledButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/primaryColor"
+            app:backgroundTint="@color/default_color"
             android:text="@string/next_onboarding"
             android:textColor="#FFFFFF" />
 

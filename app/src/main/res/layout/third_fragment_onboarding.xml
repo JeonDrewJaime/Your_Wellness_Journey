@@ -3,55 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:style="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".onboarding.FirstOnboardingFragment">
 
-    <!-- FrameLayout to contain background image and overlay -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="425dp"
+        android:layout_height="300dp"
+        android:contentDescription="@string/equipment_description"
+        android:scaleType="fitXY"
+        android:src="@drawable/health" />
 
-        <!-- Background image -->
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/equipment_description"
-            android:scaleType="fitXY"
-            android:src="@drawable/equipment3" />
-
-        <!-- ImageView for the overlay -->
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="350dp"
-            android:alpha="0.4"
-            android:contentDescription="@string/overlay"
-            android:scaleType="fitXY"
-            android:src="@drawable/overlay" />
-
-    </FrameLayout>
-
-    <!-- Main title -->
     <TextView
         android:id="@+id/textView"
-        android:layout_width="match_parent"
+        style="@style/TitleTextStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
         android:gravity="center"
-        android:text="@string/hassle_free_repetition_tracking"
+        android:text="Health Assessment"
+        android:layout_marginTop="40dp"
         android:textSize="32sp"
         android:textStyle="bold" />
 
-    <!-- Sub title -->
     <TextView
+        style="@style/TitleTextStyle"
+        android:fontFamily="@font/cronus"
+        android:layout_margin="10dp"
         android:id="@+id/textView2"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
-        android:text="@string/counting_made_easier"
+        android:text="Empowering healthcare providers with advanced knowledge and skills in pediatric palliative care for improved patient and family support."
         android:textSize="22sp" />
 
 </LinearLayout>

@@ -21,18 +21,19 @@
             android:id="@+id/medicationImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
+
             android:src="@drawable/logo"
             android:contentDescription="Medication Image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginRight="30dp"
+
             app:layout_constraintBottom_toBottomOf="@id/medicationDosage" />
 
         <TextView
             android:id="@+id/medicationName"
             android:layout_width="213dp"
             android:layout_height="24dp"
-            android:layout_marginLeft="30sp"
+            android:layout_marginLeft="34dp"
             android:fontFamily="@font/oh_whale"
             android:text="Medication Name"
             android:textColor="@android:color/white"
@@ -46,7 +47,7 @@
             android:id="@+id/medicationDosage"
             android:layout_width="213dp"
             android:layout_height="31dp"
-            android:layout_marginLeft="30sp"
+            android:layout_marginLeft="40sp"
             android:layout_marginTop="4dp"
             android:fontFamily="@font/cronus"
             android:text="Dosage Information"

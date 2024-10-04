@@ -3,6 +3,7 @@ import android.app.AlertDialog // Import the AlertDialog class
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -22,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 
 class PostAssessment : AppCompatActivity() {
 
@@ -101,24 +104,37 @@ class PostAssessment : AppCompatActivity() {
 
     private fun displayQuestions() {
         questionsLayout.removeAllViews() // Clear any existing views
+
+        // Load the custom font from the resources
+        val customFont = ResourcesCompat.getFont(this, R.font.cronus) // Change R.font.cronus to your desired font
         questionsList.forEach { question ->
             val questionView = layoutInflater.inflate(R.layout.question_item, questionsLayout, false)
             val questionText = questionView.findViewById<TextView>(R.id.questionText)
             val optionsGroup = questionView.findViewById<RadioGroup>(R.id.optionsGroup)
+            val textColor = ContextCompat.getColor(this, R.color.darker_color) // Use a color from resources
 
+            // Set question text
             questionText.text = question.text
+
+            // Dynamically add RadioButtons for each option
             question.options.forEach { option ->
                 val radioButton = RadioButton(this).apply {
+                    setTextColor(textColor) // Set custom text color
                     text = option.value
+                    typeface = customFont // Set custom font for each radio button
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
                 }
                 optionsGroup.addView(radioButton)
             }
+
+            // Add the question view to the parent layout
             questionsLayout.addView(questionView)
         }
     }
-
     private fun checkAnswers() {
         var score = 0
+        val totalQuestions = questionsList.size  // Get total number of questions
+
         questionsList.forEachIndexed { index, question ->
             val questionView = questionsLayout.getChildAt(index) as View
             val optionsGroup = questionView.findViewById<RadioGroup>(R.id.optionsGroup)
@@ -133,25 +149,25 @@ class PostAssessment : AppCompatActivity() {
         }
 
         // Store the score in the database
-        storeScore(score)
+        storeScore(score, totalQuestions)  // Pass total number of questions
     }
 
-    private fun storeScore(score: Int) {
+    private fun storeScore(score: Int, totalQuestions: Int) {
         val currentDate = java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault()).format(java.util.Date())
         val scoreReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("users/$currentUserId/Post/$currentDate/score")
 
         scoreReference.setValue(score).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Toast.makeText(this, "Score stored successfully: $score", Toast.LENGTH_SHORT).show()
-                // Show custom dialog
-                showScoreDialog(score) // Use the custom dialog
+                Toast.makeText(this, "Score stored successfully: $score/$totalQuestions", Toast.LENGTH_SHORT).show()
+                // Show custom dialog with score out of total questions
+                showScoreDialog(score, totalQuestions)
             } else {
                 Toast.makeText(this, "Error storing score", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun showScoreDialog(score: Int) {
+    private fun showScoreDialog(score: Int, totalQuestions: Int) {
         // Create a new Dialog
         val dialog = Dialog(this)
 
@@ -165,7 +181,7 @@ class PostAssessment : AppCompatActivity() {
 
         // Set the dialog title and message
         dialogTitle.text = "Assessment Score"
-        dialogMessage.text = "Your score is: $score"
+        dialogMessage.text = "$score/$totalQuestions"  // Display score out of total questions
 
         // Set the custom layout to the dialog
         dialog.setContentView(view)
@@ -179,7 +195,6 @@ class PostAssessment : AppCompatActivity() {
 
         dialog.show()
     }
-
     data class Question(
         val text: String,
         val options: Map<String, String>,
