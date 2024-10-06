@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.yourjourney.R
 import com.example.yourjourney.data.plan.Medicines
@@ -21,15 +22,13 @@ class MedicationAdapter(
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val medication = getItem(position)
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.list_item_medication, parent, false)
-
         val nameTextView: TextView = view.findViewById(R.id.medicationName)
-        val doseTextView: TextView = view.findViewById(R.id.medicationDosage)
         val medicationImageView: ImageView = view.findViewById(R.id.medicationImage)
         val medicationButton: Button = view.findViewById(R.id.medicationButton)
 
         // Set medication name and dosage
         nameTextView.text = medication?.name
-        doseTextView.text = "Dose: ${medication?.dosage}"
+
 
         // Load image using Glide
         Glide.with(context)

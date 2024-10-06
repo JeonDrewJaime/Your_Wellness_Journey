@@ -225,7 +225,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         buttonCancelExercise.setOnClickListener {
             synthesizeSpeech("Workout Cancelled")
             stopMediaTimer()
-            val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            val bottomNavigationView =
+                activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNavigationView?.selectedItemId = R.id.navigation_exercise
             screenOn = false
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
@@ -234,15 +235,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             cameraViewModel.triggerClassification.value = false
         }
 
-        // 10 reps =  3.2 for push up -> 1 reps = 3.2/10
-        // Complete the exercise
-        val sitUp = Postures.situp
-        val pushUp = Postures.pushup
-        val lunge = Postures.lunge
-        val squat = Postures.squat
-        val chestPress = Postures.chestpress
-        val deadLift = Postures.deadlift
-        val shoulderPress = Postures.shoulderpress
 
 
 
@@ -291,6 +283,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             // Add entries for default exercises (squat, lunge, warrior, tree)
             addExerciseIfNotPresent(exerciseNameToDisplay(SQUATS_CLASS))
             addExerciseIfNotPresent(exerciseNameToDisplay(LUNGES_CLASS))
+            addExerciseIfNotPresent(exerciseNameToDisplay(PUSHUPS_CLASS))
+            addExerciseIfNotPresent(exerciseNameToDisplay(SITUP_UP_CLASS))
             addExerciseIfNotPresent(exerciseNameToDisplay(WARRIOR_CLASS))
             addExerciseIfNotPresent(exerciseNameToDisplay(YOGA_TREE_CLASS))
 
@@ -338,97 +332,287 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             }
         }
 
-        // Declare variables to store previous values
+
         var previousKey: String? = null
         var previousConfidence: Float? = null
 
+        val currentUser = auth.currentUser
 
-        cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
-            for ((key, value) in mapResult) {
-                // Visualize the repetition exercise data
-                if (key in POSE_CLASSES.toList()) {
-                    // get the data from exercise log of specific exercise
-                    val data = exerciseLog.getExerciseData(key)
-                    if (key in onlyExercise && data == null) {
-                        // Adding exercise for the first time
-                        exerciseLog.addExercise(null, key, value.repetition, value.confidence, false)
-                    } else if (key in onlyExercise && value.repetition == data?.repetitions?.plus(1)) {
-                        // Check if the exercise is squats and update the repetition text view
-                        if (key == Postures.squat.type && value.repetition == 5) {
-                            synthesizeSpeech("Congratulation! Squat completed.")
-                            markExerciseAsDone("Squats")
-                        } else {
-                            currentRepetitionTextView.text = "${value.repetition} Repetitions"
-                        }
-                        workoutRecyclerView.visibility = View.VISIBLE
-                        if (isAllWorkoutFinished) {
-                            completeAllExercise.visibility = View.VISIBLE
-                        } else {
-                            completeAllExercise.visibility = View.GONE
-                        }
-                        confIndicatorView.visibility = View.INVISIBLE
-                        confidenceTextView.visibility = View.INVISIBLE
-                        yogaPoseImage.visibility = View.INVISIBLE
-                        // Check if the exercise target is complete
-                        var repetition: Int? = databaseExercisePlan.find {
-                            it.exerciseName.equals(key, ignoreCase = true)
-                        }?.repetitions
-                        if (repetition == null || repetition == 0) {
-                            repetition = HighCount
-                        }
-                        if (!data.isComplete && (value.repetition >= repetition)) {
-                            // Adding data only when the increment happens
-                            exerciseLog.addExercise(data.planId, key, value.repetition, value.confidence, true)
-                            // Inform the user about completion only once
-                            synthesizeSpeech(exerciseNameToDisplay(key) + " exercise Complete")
-                            // Check if all the exercise list complete
-                            if (exerciseLog.areAllExercisesCompleted(databaseExercisePlan)) {
-                                val handler = Handler(Looper.getMainLooper())
-                                handler.postDelayed({
-                                    synthesizeSpeech("Congratulation! all the planned exercise completed")
-                                    isAllWorkoutFinished = true
-                                    completeAllExercise.visibility = View.VISIBLE
-                                }, 5000)
-                            }
-                            // Update complete status for existing plan
-                            if (data.planId != null) {
-                                lifecycleScope.launch(Dispatchers.IO) {
-                                    addPlanViewModel.updateComplete(true, System.currentTimeMillis(), data.planId)
+        if (currentUser != null) {
+            val userId = currentUser.uid
+
+            // Firebase connection - Get disease and stage details from the logged-in user's data
+            val userRef = database.getReference("users/$userId")
+            userRef.get().addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    val disease =
+                        snapshot.child("disease").value.toString() // Assuming 'disease' exists under user's data
+                    val stage =
+                        snapshot.child("stage").value.toString() // Assuming 'stage' exists under user's data
+
+                    // Get the current day of the week
+                    val calendar = Calendar.getInstance()
+                    val dayString =
+                        SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time)
+
+                    // Reference to reps for the exercises for the disease and stage
+                    val squatRepsRef =
+                        database.getReference("diseases/$disease/$stage/Exercise/$dayString/Squats/reps")
+                    val lungeRepsRef =
+                        database.getReference("diseases/$disease/$stage/Exercise/$dayString/Lunges/reps")
+                    val sitUpRepsRef =
+                        database.getReference("diseases/$disease/$stage/Exercise/$dayString/Sit-ups/reps")
+                    val pushUpRepsRef =
+                        database.getReference("diseases/$disease/$stage/Exercise/$dayString/Pushups/reps")
+
+                    // Initialize default values for reps
+                    var squatReps = 0
+                    var lungeReps = 0
+                    var sitUpReps = 0
+                    var pushUpReps = 0
+
+                    // Counter to track fetched reps
+                    var fetchedRepsCount = 0
+                    val totalRepsCount = 4 // Total exercises
+
+                    // Function to check if all reps are fetched
+                    fun checkAllFetched() {
+                        if (fetchedRepsCount == totalRepsCount) {
+                            // Now we have all reps and can proceed with the exercise logic
+                            println("Target reps for squats: $squatReps")
+                            println("Target reps for lunges: $lungeReps")
+                            println("Target reps for sit-ups: $sitUpReps")
+                            println("Target reps for push-ups: $pushUpReps")
+
+                            // Observe the posture live data
+                            cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
+                                for ((key, value) in mapResult) {
+                                    // Visualize the repetition exercise data
+                                    if (key in POSE_CLASSES.toList()) {
+                                        val data = exerciseLog.getExerciseData(key)
+
+                                        if (key in onlyExercise && data == null) {
+                                            // Adding exercise for the first time
+                                            exerciseLog.addExercise(
+                                                null,
+                                                key,
+                                                value.repetition,
+                                                value.confidence,
+                                                false
+                                            )
+                                        } else if (key in onlyExercise && value.repetition == data?.repetitions?.plus(
+                                                1
+                                            )
+                                        ) {
+                                            // Handle squats logic
+                                            if (key == Postures.squat.type) {
+                                                if (squatReps > 0 && value.repetition == squatReps) {
+                                                    synthesizeSpeech("Congratulations! Squat completed.")
+                                                    markExerciseAsDone("Squats")
+                                                } else {
+                                                    currentRepetitionTextView.text =
+                                                        "${value.repetition} Repetitions"
+                                                }
+                                            }
+                                            // Handle lunges logic
+                                            if (key == Postures.lunge.type) {
+                                                if (lungeReps > 0 && value.repetition == lungeReps) {
+                                                    synthesizeSpeech("Congratulations! Lunge completed.")
+                                                    markExerciseAsDone("Lunges")
+                                                } else {
+                                                    currentRepetitionTextView.text =
+                                                        "${value.repetition} Repetitions"
+                                                }
+                                            }
+                                            // Handle sit-ups logic
+                                            if (key == Postures.situp.type) {
+                                                if (sitUpReps > 0 && value.repetition == sitUpReps) {
+                                                    synthesizeSpeech("Congratulations! Sit-up completed.")
+                                                    markExerciseAsDone("Sit-ups")
+                                                } else {
+                                                    currentRepetitionTextView.text =
+                                                        "${value.repetition} Repetitions"
+                                                }
+                                            }
+                                            // Handle push-ups logic
+                                            if (key == Postures.pushup.type) {
+                                                if (pushUpReps > 0 && value.repetition == pushUpReps) {
+                                                    synthesizeSpeech("Congratulations! Push-up completed.")
+                                                    markExerciseAsDone("Pushups")
+                                                } else {
+                                                    currentRepetitionTextView.text =
+                                                        "${value.repetition} Repetitions"
+                                                }
+                                            }
+
+                                            workoutRecyclerView.visibility = View.VISIBLE
+                                            if (isAllWorkoutFinished) {
+                                                completeAllExercise.visibility = View.VISIBLE
+                                            } else {
+                                                completeAllExercise.visibility = View.GONE
+                                            }
+                                            confIndicatorView.visibility = View.INVISIBLE
+                                            confidenceTextView.visibility = View.INVISIBLE
+                                            yogaPoseImage.visibility = View.INVISIBLE
+
+                                            var repetition: Int? = databaseExercisePlan.find {
+                                                it.exerciseName.equals(key, ignoreCase = true)
+                                            }?.repetitions
+
+                                            if (repetition == null || repetition == 0) {
+                                                repetition = HighCount
+                                            }
+
+                                            if (!data.isComplete && (value.repetition >= repetition)) {
+                                                // Adding data only when the increment happens
+                                                exerciseLog.addExercise(
+                                                    data.planId,
+                                                    key,
+                                                    value.repetition,
+                                                    value.confidence,
+                                                    true
+                                                )
+                                                synthesizeSpeech(exerciseNameToDisplay(key) + " exercise Complete")
+
+                                                if (exerciseLog.areAllExercisesCompleted(
+                                                        databaseExercisePlan
+                                                    )
+                                                ) {
+                                                    val handler = Handler(Looper.getMainLooper())
+                                                    handler.postDelayed({
+                                                        synthesizeSpeech("Congratulations! All planned exercises completed.")
+                                                        isAllWorkoutFinished = true
+                                                        completeAllExercise.visibility =
+                                                            View.VISIBLE
+                                                    }, 5000)
+                                                }
+
+                                                if (data.planId != null) {
+                                                    lifecycleScope.launch(Dispatchers.IO) {
+                                                        addPlanViewModel.updateComplete(
+                                                            true,
+                                                            System.currentTimeMillis(),
+                                                            data.planId
+                                                        )
+                                                    }
+                                                }
+                                            } else if (data.isComplete) {
+                                                exerciseLog.addExercise(
+                                                    data.planId,
+                                                    key,
+                                                    value.repetition,
+                                                    value.confidence,
+                                                    true
+                                                )
+                                            } else {
+                                                exerciseLog.addExercise(
+                                                    data.planId,
+                                                    key,
+                                                    value.repetition,
+                                                    value.confidence,
+                                                    false
+                                                )
+                                            }
+
+                                            displayResult(key, exerciseLog)
+
+                                            val exerciseList = exerciseLog.getExerciseDataList()
+                                            workoutAdapter =
+                                                WorkoutAdapter(exerciseList, databaseExercisePlan)
+                                            workoutRecyclerView.adapter = workoutAdapter
+                                        } else if (key in onlyPose && value.confidence > 0.5) {
+                                            if (key != previousKey || value.confidence != previousConfidence) {
+                                                displayConfidence(key, value.confidence)
+                                                workoutRecyclerView.visibility = View.GONE
+                                                completeAllExercise.visibility = View.GONE
+                                                currentExerciseTextView.visibility = View.VISIBLE
+                                                currentRepetitionTextView.visibility = View.GONE
+                                                confidenceTextView.visibility = View.VISIBLE
+                                            }
+                                        }
+                                        previousKey = key
+                                        previousConfidence = value.confidence
+                                    }
                                 }
                             }
-                        } else if (data.isComplete) {
-                            // Adding data only when the increment happens
-                            exerciseLog.addExercise(data.planId, key, value.repetition, value.confidence, true)
-                        } else {
-                            // Adding data only when the increment happens
-                            exerciseLog.addExercise(data.planId, key, value.repetition, value.confidence, false)
-                        }
-                        // Display Current result when the increment happens
-                        displayResult(key, exerciseLog)
-
-                        // Update the display list of all exercise progress when the increment happens
-                        val exerciseList = exerciseLog.getExerciseDataList()
-                        workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
-                        workoutRecyclerView.adapter = workoutAdapter
-                    } else if (key in onlyPose && value.confidence > 0.5) {
-                        if (key != previousKey || value.confidence != previousConfidence) {
-                            // Implementation of pose confidence
-                            displayConfidence(key, value.confidence)
-                            workoutRecyclerView.visibility = View.GONE
-                            completeAllExercise.visibility = View.GONE
-                            currentExerciseTextView.visibility = View.VISIBLE
-                            currentRepetitionTextView.visibility = View.GONE
-                            confidenceTextView.visibility = View.VISIBLE
                         }
                     }
-                    previousKey = key
-                    previousConfidence = value.confidence
+
+                    // Fetch reps for each exercise
+                    squatRepsRef.get().addOnSuccessListener { repsSnapshot ->
+                        if (repsSnapshot.exists()) {
+                            squatReps = repsSnapshot.value.toString().toInt()
+                        }
+                        fetchedRepsCount++
+                        checkAllFetched()
+                    }.addOnFailureListener {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to fetch squat reps.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        fetchedRepsCount++
+                        checkAllFetched()
+                    }
+
+                    lungeRepsRef.get().addOnSuccessListener { repsSnapshot ->
+                        if (repsSnapshot.exists()) {
+                            lungeReps = repsSnapshot.value.toString().toInt()
+                        }
+                        fetchedRepsCount++
+                        checkAllFetched()
+                    }.addOnFailureListener {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to fetch lunge reps.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        fetchedRepsCount++
+                        checkAllFetched()
+                    }
+
+                    sitUpRepsRef.get().addOnSuccessListener { repsSnapshot ->
+                        if (repsSnapshot.exists()) {
+                            sitUpReps = repsSnapshot.value.toString().toInt()
+                        }
+                        fetchedRepsCount++
+                        checkAllFetched()
+                    }.addOnFailureListener {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to fetch sit-up reps.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        fetchedRepsCount++
+                        checkAllFetched()
+                    }
+
+                    pushUpRepsRef.get().addOnSuccessListener { repsSnapshot ->
+                        if (repsSnapshot.exists()) {
+                            pushUpReps = repsSnapshot.value.toString().toInt()
+                        }
+                        fetchedRepsCount++
+                        checkAllFetched()
+                    }.addOnFailureListener {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to fetch push-up reps.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        fetchedRepsCount++
+                        checkAllFetched()
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), "User not found", Toast.LENGTH_SHORT).show()
                 }
+            }.addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to retrieve user data", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
-
-    private fun markExerciseAsDone(exerciseName: String) {
+        private fun markExerciseAsDone(exerciseName: String) {
         val currentUser = auth.currentUser
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -457,7 +641,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                             scoreRef.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(scoreSnapshot: DataSnapshot) {
                                     if (scoreSnapshot.exists()) {
-                                        val exerciseScore = scoreSnapshot.getValue(Int::class.java) ?: 0 // Default score if not found
+                                        val exerciseScore = scoreSnapshot.getValue(Float::class.java) ?: 0f // Default score if not found
 
                                         // Now mark the exercise as done
                                         val doneRef = database.getReference("users")
@@ -518,7 +702,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         }
     }
 
-    private fun updateTotalScore(userId: String, currentDate: String, exerciseScore: Int) {
+    private fun updateTotalScore(userId: String, currentDate: String, exerciseScore: Float) {
         val totalScoreRef = database.getReference("users")
             .child(userId)
             .child("exercises")
@@ -528,7 +712,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         // Fetch the existing total score for the date
         totalScoreRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(totalScoreSnapshot: DataSnapshot) {
-                val currentTotalScore = totalScoreSnapshot.getValue(Int::class.java) ?: 0
+                val currentTotalScore = totalScoreSnapshot.getValue(Float::class.java) ?: 0f
                 val newTotalScore = currentTotalScore + exerciseScore
 
                 // Update the total score for the specific date

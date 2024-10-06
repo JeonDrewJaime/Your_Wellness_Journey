@@ -46,10 +46,11 @@
         <TextView
             android:id="@+id/diet"
             style="@style/TitleTextStyle"
-            android:layout_width="112dp"
-            android:layout_height="50dp"
-            android:text="DIET"
-            android:textSize="45sp"
+            android:layout_width="375dp"
+            android:layout_height="46dp"
+            android:text="Acute Lymphoblastic Leukemia"
+            android:textSize="27sp"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView3" />

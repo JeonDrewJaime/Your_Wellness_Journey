@@ -3,12 +3,14 @@
 
 
     <string-array name="genders">
+        <item>Gender</item>
         <item>Male</item>
         <item>Female</item>
         <item>Others</item>
     </string-array>
 
     <string-array name="months">
+        <item>Birthmonth</item>
         <item>January</item>
         <item>February</item>
         <item>March</item>
@@ -25,6 +27,7 @@
 
 
     <string-array name="days">
+        <item>Birthday</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -59,19 +62,29 @@
     </string-array>
 
     <string-array name="diseases">
-        <item>Cancer</item>
-        <item>Cancer</item>
-        <item>Cancer</item>
+        <item>Disease</item>
+        <item>Acute Lymphoblastic Leukemia</item>
+        <item>Non Hodking Lymphoma</item>
+        <item>Brain Tumor</item>
+        <item>Rhabdosarcoma</item>
+        <item>Multiple Myeloma</item>
+        <item>Osteosarcoma</item>
+        <item>Wilms Tumor</item>
+        <item>Retinoblastoma</item>
+        <item>Fibrosarcoma</item>
+
     </string-array>
 
 
     <string-array name="stages">
+        <item>Stage</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
     </string-array>
     <string-array name="years">
+        <item>Birthyear</item>
         <item>2000</item>
         <item>2001</item>
         <item>2002</item>

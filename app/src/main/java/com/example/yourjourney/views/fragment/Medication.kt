@@ -206,7 +206,7 @@ class Medication : Fragment() {
                             scoreRef.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(scoreSnapshot: DataSnapshot) {
                                     if (scoreSnapshot.exists()) {
-                                        val medicationScore = scoreSnapshot.getValue(Int::class.java) ?: 0 // Default score if not found
+                                        val medicationScore = scoreSnapshot.getValue(Float::class.java) ?: 0f // Default score if not found
 
                                         // Now mark the medication as done
                                         val doneRef = database.getReference("users")
@@ -228,7 +228,7 @@ class Medication : Fragment() {
                                                     // Update the medication as done
                                                     doneRef.setValue(medicationData).addOnCompleteListener { task ->
                                                         if (task.isSuccessful) {
-                                                            // Now update the total score for the date
+                                                            Toast.makeText(requireContext(), "You've done taking $medicationName ", Toast.LENGTH_SHORT).show()
                                                             updateTotalScore(userId, currentDate, medicationScore)
                                                         } else {
                                                             Toast.makeText(requireContext(), "Failed to mark $medicationName as done.", Toast.LENGTH_SHORT).show()
@@ -267,7 +267,7 @@ class Medication : Fragment() {
         }
     }
 
-    private fun updateTotalScore(userId: String, currentDate: String, medicationScore: Int) {
+    private fun updateTotalScore(userId: String, currentDate: String, medicationScore: Float) {
         val totalScoreRef = database.getReference("users")
             .child(userId)
             .child("medications")
@@ -277,13 +277,13 @@ class Medication : Fragment() {
         // Fetch the existing total score for the date
         totalScoreRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(totalScoreSnapshot: DataSnapshot) {
-                val currentTotalScore = totalScoreSnapshot.getValue(Int::class.java) ?: 0
+                val currentTotalScore = totalScoreSnapshot.getValue(Float::class.java) ?: 0f
                 val newTotalScore = currentTotalScore + medicationScore
 
                 // Update the total score for the specific date
                 totalScoreRef.setValue(newTotalScore).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(requireContext(), "Total score updated to $newTotalScore for $currentDate.", Toast.LENGTH_SHORT).show()
+
                     } else {
                         Toast.makeText(requireContext(), "Failed to update total score for $currentDate.", Toast.LENGTH_SHORT).show()
                     }

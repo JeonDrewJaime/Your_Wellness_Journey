@@ -138,7 +138,6 @@ public class PoseClassifierProcessor {
                 }
                 // Add an empty line between files
                 writer.println();
-
                 reader.close();
             }
         } catch (IOException e) {
@@ -179,6 +178,8 @@ public class PoseClassifierProcessor {
         }
 
         // Exercise by Default
+        addUniqueFile(files, uniqueFileNames, PUSH_UP_FILE);
+        addUniqueFile(files, uniqueFileNames, SIT_UP_FILE);
         addUniqueFile(files, uniqueFileNames, LUNGE_FILE);
         addUniqueFile(files, uniqueFileNames, NEUTRAL_STANDING_FILE);
         addUniqueFile(files, uniqueFileNames, SQUAT_FILE);

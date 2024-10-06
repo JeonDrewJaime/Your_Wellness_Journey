@@ -1,4 +1,5 @@
 package com.example.yourjourney.views.activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -94,8 +95,9 @@ class SignUp : AppCompatActivity() {
                     userId?.let {
                         database.child("users").child(it).setValue(user)
                             .addOnSuccessListener {
-
                                 Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
                             }
                             .addOnFailureListener { e ->
                                 Toast.makeText(this, "Failed to register user: ${e.message}", Toast.LENGTH_SHORT).show()

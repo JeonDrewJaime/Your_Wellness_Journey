@@ -283,15 +283,13 @@
                     android:layout_width="203dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="12dp"
-
-
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="30sp"
+                    android:autoSizeStepGranularity="2sp"
                     android:layout_marginBottom="16dp"
                     android:text="Disease"
-
-
                     android:textColor="@color/white"
-                    android:textSize="30sp"
-
                     app:layout_constraintBottom_toTopOf="@+id/assesmentButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"

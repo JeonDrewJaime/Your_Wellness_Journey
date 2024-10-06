@@ -40,7 +40,6 @@ class PostAssessment : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_post_assessment)
 
-        // Initialize views
         questionsLayout = findViewById(R.id.questionsLayout)
         submitButton = findViewById(R.id.submitButton)
 
@@ -57,7 +56,7 @@ class PostAssessment : AppCompatActivity() {
             currentUserId = currentUser.uid
             fetchUserDetails()
         } else {
-            // Handle user not logged in (e.g., redirect to login screen)
+
         }
 
         submitButton.setOnClickListener {
@@ -148,8 +147,8 @@ class PostAssessment : AppCompatActivity() {
             }
         }
 
-        // Store the score in the database
-        storeScore(score, totalQuestions)  // Pass total number of questions
+
+        storeScore(score, totalQuestions)
     }
 
     private fun storeScore(score: Int, totalQuestions: Int) {
