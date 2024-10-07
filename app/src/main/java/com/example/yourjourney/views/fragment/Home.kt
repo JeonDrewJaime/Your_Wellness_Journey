@@ -106,7 +106,6 @@ class Home : Fragment() {
             }
         }
 
-
         updateProgressTexts(
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -178,7 +177,6 @@ class Home : Fragment() {
                     Toast.makeText(context, "Database error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
                 }
             })
-
 
             exerciseRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {

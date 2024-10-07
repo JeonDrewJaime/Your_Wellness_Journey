@@ -30,6 +30,7 @@ class Diet : Fragment() {
         }
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,15 +40,15 @@ class Diet : Fragment() {
 
         // Reference to the TextView for avoid details
         val avoidTextView: TextView = view.findViewById(R.id.avoid)  // Assuming you have a TextView with id 'avoid'
-
+        val dietTextView: TextView = view.findViewById(R.id.diet)
         // Fetch the disease avoid details from Realtime Database
-        fetchDiseaseAvoidDetails(avoidTextView)
+        fetchDiseaseAvoidDetails(avoidTextView, dietTextView)
 
         return view
     }
 
     // Function to fetch the disease avoid details from Realtime Database
-    private fun fetchDiseaseAvoidDetails(avoidTextView: TextView) {
+    private fun fetchDiseaseAvoidDetails(avoidTextView: TextView, dietTextView: TextView) {
         val currentUser = auth.currentUser
 
         currentUser?.let {
@@ -58,40 +59,48 @@ class Diet : Fragment() {
                 override fun onDataChange(diseaseSnapshot: DataSnapshot) {
                     val disease = diseaseSnapshot.getValue(String::class.java)
 
-                    userRef.child("stage").addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(stageSnapshot: DataSnapshot) {
-                            val stage = stageSnapshot.getValue(String::class.java)
+                    userRef.child("stage")
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(stageSnapshot: DataSnapshot) {
+                                val stage = stageSnapshot.getValue(String::class.java)
 
-                            if (disease != null && stage != null) {
-                                val diseaseRef = database.getReference("diseases").child(disease).child(stage).child("Diet").child("Avoid")
+                                if (disease != null && stage != null) {
+                                    // Set the user's disease in the diet TextView
+                                    dietTextView.text = disease
 
-                                diseaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onDataChange(diseaseSnapshot: DataSnapshot) {
-                                        if (diseaseSnapshot.exists()) {
-                                            // Assume avoid details are stored as a list of strings
-                                            val avoidList = diseaseSnapshot.children.map { it.getValue(String::class.java) }
+                                    val diseaseRef =
+                                        database.getReference("diseases").child(disease)
+                                            .child(stage).child("Diet").child("Avoid")
 
-
-                                            val bulletPoints = avoidList.filterNotNull().joinToString("\n") { "• $it" }
-                                            avoidTextView.text = bulletPoints
-                                        } else {
-                                            avoidTextView.text = "Avoid details not found"
+                                    diseaseRef.addListenerForSingleValueEvent(object :
+                                        ValueEventListener {
+                                        override fun onDataChange(diseaseSnapshot: DataSnapshot) {
+                                            if (diseaseSnapshot.exists()) {
+                                                // Assume avoid details are stored as a list of strings
+                                                val avoidList = diseaseSnapshot.children.map {
+                                                    it.getValue(String::class.java)
+                                                }
+                                                val bulletPoints = avoidList.filterNotNull()
+                                                    .joinToString("\n") { "• $it" }
+                                                avoidTextView.text = bulletPoints
+                                            } else {
+                                                avoidTextView.text = "Avoid details not found"
+                                            }
                                         }
-                                    }
 
-                                    override fun onCancelled(error: DatabaseError) {
-                                        avoidTextView.text = "Failed to retrieve avoid details"
-                                    }
-                                })
-                            } else {
-                                avoidTextView.text = "Disease or stage not found"
+                                        override fun onCancelled(error: DatabaseError) {
+                                            avoidTextView.text = "Failed to retrieve avoid details"
+                                        }
+                                    })
+                                } else {
+                                    avoidTextView.text = "Disease or stage not found"
+                                }
                             }
-                        }
 
-                        override fun onCancelled(error: DatabaseError) {
-                            avoidTextView.text = "Failed to retrieve stage data"
-                        }
-                    })
+                            override fun onCancelled(error: DatabaseError) {
+                                avoidTextView.text = "Failed to retrieve stage data"
+                            }
+                        })
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -100,7 +109,6 @@ class Diet : Fragment() {
             })
         }
     }
-
     companion object {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
