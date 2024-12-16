@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id "androidx.navigation.safeargs"
-    id ("kotlin-kapt")
+
     id 'com.google.gms.google-services'
 }
 
@@ -75,8 +75,7 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:2.6.0")
     implementation("androidx.room:room-ktx:2.6.0")
 
-    // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:2.6.0")
+
 
     // fragment testing
     debugImplementation 'androidx.fragment:fragment-testing:1.6.2'

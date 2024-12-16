@@ -26,10 +26,8 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class Home : Fragment() {
-
     private var param1: String? = null
     private var param2: String? = null
-
     private lateinit var exerciseProgress: TextView
     private lateinit var medicationProgress: TextView
     private lateinit var calendarView: CalendarView
@@ -59,6 +57,7 @@ class Home : Fragment() {
         val currentUser = auth.currentUser
         currentUser?.let {
             val uid = currentUser.uid
+
             loadUserProfile(uid)
         }
 
@@ -75,7 +74,7 @@ class Home : Fragment() {
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
 
         // Enable or disable the button based on the day of the week
-        val isMondayOrSunday = (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.SUNDAY)
+        val isMondayOrSunday = (dayOfWeek == Calendar.MONDAY|| dayOfWeek == Calendar.SUNDAY)
 
         assesmentButton.isEnabled = isMondayOrSunday
 
@@ -89,20 +88,41 @@ class Home : Fragment() {
             assesmentButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.default_color)
         }
         else {
-            assesmentButton.text = "Available on Monday/Tuesday"
+            assesmentButton.text = "Available on Monday/Sunday"
             assesmentButton.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
         }
 
         assesmentButton.setOnClickListener {
-            if (dayOfWeek == Calendar.MONDAY) {
-                val intent = Intent(activity, PreAssessment::class.java)
-                startActivity(intent)
-            } else if (dayOfWeek == Calendar.SUNDAY) {
-                val intent = Intent(activity, PostAssessment::class.java)
-                startActivity(intent)
-            }
-            else {
-                Toast.makeText(context, "Assessment available only on Monday and Friday", Toast.LENGTH_SHORT).show()
+            val currentUser = auth.currentUser
+            if (currentUser != null) {
+                val uid = currentUser.uid
+                val currentDate = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date()) // Format the current date as yyyyMMdd
+
+                // Reference to check if the Pre-Assessment was completed today
+                val preAssessmentRef = database.child(uid).child("Pre").child(currentDate)
+
+                preAssessmentRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        // If data exists, it means the Pre-Assessment was taken today
+                        if (dataSnapshot.exists()) {
+                            Toast.makeText(context, "You have already taken the Pre-Assessment today", Toast.LENGTH_SHORT).show()
+                        } else {
+                            // Otherwise, allow the user to take the Pre-Assessment
+                            if (dayOfWeek == Calendar.MONDAY) {
+                                val intent = Intent(activity, PreAssessment::class.java)
+                                startActivity(intent)
+                            } else if (dayOfWeek == Calendar.SUNDAY) {
+                                val intent = Intent(activity, PostAssessment::class.java)
+                                startActivity(intent)
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle error if any
+                        Toast.makeText(context, "Error checking Pre-Assessment status", Toast.LENGTH_SHORT).show()
+                    }
+                })
             }
         }
 
